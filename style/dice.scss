@@ -1,0 +1,117 @@
+// https://codepen.io/Alex_Araujo/pen/MWpyXKV used
+// https://codepen.io/aardrian/pen/abBONjG
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:800,600,400,300);
+
+$font: open sans;
+$bg-color: #7f38a6;
+$bg-color-2: #d12cb0;
+
+$side: 50px;
+$sqrt3: 1.732;
+$tilt: 52.62deg; // asin(tan(54deg)/sqrt(3))
+$capheight: -1.051 * $side; // sqrt(3-tan(54deg)^2 ) 
+$triheight: $side * $sqrt3;
+$vshift: $capheight + $triheight / 2;
+
+$innerradius: 1.376 * $side; // tan(54deg)
+$outerradius: 1.701 * $side; // 1/cos(54deg)
+$sidetilt: 10.81deg; // asin( (sec(54deg)-tan(54deg))/sqrt(3) )
+$sideheight: $outerradius; // sqrt(3-(sec(54deg)-tan(54deg))^2)
+$vshift2: $sideheight + $triheight - $vshift;
+
+.center{
+  position: absolute;
+
+  h1 {
+    top: 47%;
+  }
+}
+
+// .frame{
+//   width: 400px;
+//   height: 400px;
+//   background: linear-gradient($bg-color 0%, $bg-color-2 100%);
+//   font-family: $font;
+//   border-radius: 3px;
+//   overflow: hidden;
+//   box-shadow: 4px 6px 12px 0 rgba(0,0,0,0.1);
+// }
+
+.container{
+  perspective: 1000px;
+}
+
+.rolling {
+  animation: spin 2s infinite linear;
+}
+
+.dice{
+  position: relative;
+  width: $side * 2;
+  height: $side * 2;
+  //background: rgba(0,0,0,1);
+  transform-style: preserve-3d;
+  
+  [class^='side'] {
+    position: absolute;
+    left: 0;
+    bottom: 50%;
+    border-bottom: $triheight solid #000;
+    border-left: $side solid transparent;
+    border-right: $side solid transparent;
+    transform-origin: 50% 0%;
+  }
+  
+  @for $i from 1 through 20 {
+    .side-#{$i}{
+      border-bottom-color: hsla(300,50,(5 * $i), 0.5);
+    }
+  }
+  
+  @for $i from 1 through 5 { // top
+    .side-#{$i} {
+      transform: 
+        translateY($vshift) 
+        rotateY(#{$i * 72deg}) 
+        rotateX($tilt);
+    }       
+  }
+  @for $i from 6 through 10 { // bottom
+    .side-#{$i} {
+      transform: 
+        translateY($vshift2) 
+        rotateY(#{$i * 72deg + 36deg}) 
+        rotateX(#{180deg - $tilt});
+    }		
+  }
+  @for $i from 11 through 15 { // bottom sides
+    .side-#{$i} {
+      transform: 
+        translateY(#{$triheight / 2}) 
+        rotateY(#{$i * 72deg + 36deg}) 
+        translateZ($outerradius)
+        rotateX(-$sidetilt);
+    }
+  }
+  @for $i from 16 through 20 { // top sides
+    .side-#{$i} {
+      transform: 
+        translateY(#{$triheight / 2 + $sideheight}) 
+        rotateY(#{$i * 72deg})
+        rotateZ(180deg)
+        translateZ($outerradius)
+        rotateX(-$sidetilt);
+    }
+  }
+}
+
+
+@keyframes spin {
+  0% { 
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+  100% { 
+    transform: rotateX(360deg) rotateY(720deg) rotateZ(1080deg);
+  }
+}
