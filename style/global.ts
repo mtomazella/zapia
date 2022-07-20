@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components'
+
 import { AppPalette } from './palette'
 
 export const GlobalStyle = createGlobalStyle`
@@ -11,7 +12,7 @@ html{
 }
 
 body{
-  background-color: ${AppPalette.neutral.white};
+  background-color: ${AppPalette.neutral.black};
   height: 100vh;
   padding: 0;
   margin: 0;

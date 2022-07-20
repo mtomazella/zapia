@@ -4,7 +4,7 @@ import { DiceGrid } from './components/DiceGrid'
 import { StyledRoom } from './Room.styled'
 
 export const Room: React.FC = () => {
-  const dice = Array(20).fill({
+  const dice = Array(2).fill({
     expression: '1d20',
     isRolling: false,
   })

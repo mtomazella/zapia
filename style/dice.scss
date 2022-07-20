@@ -20,24 +20,6 @@ $sidetilt: 10.81deg; // asin( (sec(54deg)-tan(54deg))/sqrt(3) )
 $sideheight: $outerradius; // sqrt(3-(sec(54deg)-tan(54deg))^2)
 $vshift2: $sideheight + $triheight - $vshift;
 
-.center{
-  position: absolute;
-
-  h1 {
-    top: 47%;
-  }
-}
-
-// .frame{
-//   width: 400px;
-//   height: 400px;
-//   background: linear-gradient($bg-color 0%, $bg-color-2 100%);
-//   font-family: $font;
-//   border-radius: 3px;
-//   overflow: hidden;
-//   box-shadow: 4px 6px 12px 0 rgba(0,0,0,0.1);
-// }
-
 .container{
   perspective: 1000px;
 }

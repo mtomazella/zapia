@@ -10,22 +10,9 @@ type DiceProps = {
   isRolling: boolean
 }
 
-type DicePositionProps = {
-  top?: number
-  resultTop?: number
-  left?: number
-  translateX?: number
-  translateY?: number
-}
-
-export const Die: React.FC<DiceProps & DicePositionProps> = ({
+export const Die: React.FC<DiceProps> = ({
   expression,
   isRolling: shouldRoll,
-  top = 50,
-  resultTop = 30,
-  left = 50,
-  translateX = -50,
-  translateY = -50,
 }) => {
   const { result, isRolling, roll } = useDieRoll({
     expression,
@@ -36,17 +23,8 @@ export const Die: React.FC<DiceProps & DicePositionProps> = ({
   }, [shouldRoll])
 
   return (
-    <StyledDie
-      className="container center"
-      style={{
-        top: `${top.toString()}%`,
-        left: `${left.toString()}%`,
-        transform: `translate(${translateX.toString()}%, ${translateY.toString()}%`,
-      }}
-    >
-      <h1 className="center" style={{ top: `${resultTop}%` }}>
-        {!isRolling && result?.toString()}
-      </h1>
+    <StyledDie className="container center">
+      <h1 className="center">{!isRolling && result?.toString()}</h1>
       <div className={`dice ${isRolling ? 'rolling' : ''}`}>
         {range(1, 20).map(i => (
           <div className={`side-${i}`} key={i} />
