@@ -1,24 +1,34 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { DiceRoll } from '@dice-roller/rpg-dice-roller'
+import RpgRoller from 'roll'
+
+const rpgRoller = new RpgRoller()
 
 type UseDieRollParams = {
-  expression: string
+  expression?: string
   duration?: number // ms
 }
 
 export const useDieRoll = ({
-  expression,
+  expression: rawExpression = '1d20',
   duration = 2000,
 }: UseDieRollParams) => {
-  const [isRolling, setRolling] = useState(false)
-  const [result, setIsRolling] = useState<number | undefined>(undefined)
+  const [isRolling, setIsRolling] = useState(false)
+  const [result, setResult] = useState<number | undefined>(undefined)
+  const [error, setError] = useState<string>()
+
+  const expression = useMemo(
+    () => (!rawExpression ? '1d20' : rawExpression),
+    [rawExpression]
+  )
 
   const roll = useCallback(() => {
-    setRolling(true)
+    if (!rpgRoller.validate(expression)) return
+    setError(undefined)
+    setIsRolling(true)
     setTimeout(() => {
-      setIsRolling(new DiceRoll(expression).total)
-      setRolling(false)
+      setResult(rpgRoller.roll(expression).result)
+      setIsRolling(false)
     }, duration)
   }, [expression, duration])
 
@@ -30,5 +40,6 @@ export const useDieRoll = ({
     roll,
     isRolling,
     result,
+    error,
   }
 }

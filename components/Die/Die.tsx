@@ -8,11 +8,13 @@ import { StyledDie } from './Die.styled'
 type DiceProps = {
   expression: string
   isRolling: boolean
+  setIsRolling: (isRolling: boolean) => void
 }
 
 export const Die: React.FC<DiceProps> = ({
   expression,
   isRolling: shouldRoll,
+  setIsRolling,
 }) => {
   const { result, isRolling, roll } = useDieRoll({
     expression,
@@ -21,6 +23,10 @@ export const Die: React.FC<DiceProps> = ({
   useEffect(() => {
     if (shouldRoll) roll()
   }, [shouldRoll])
+
+  useEffect(() => {
+    setIsRolling(isRolling)
+  }, [isRolling])
 
   return (
     <StyledDie className="container center">

@@ -47,7 +47,7 @@ $vshift2: $sideheight + $triheight - $vshift;
   
   @for $i from 1 through 20 {
     .side-#{$i}{
-      border-bottom-color: hsla(300,50,(5 * $i), 0.5);
+      border-bottom-color: hsla(170,80,(4 * $i), 0.60);
     }
   }
   

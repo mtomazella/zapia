@@ -1,3 +1,3 @@
-import Room from 'pages/room'
+import Space from './space'
 
-export default Room
+export default Space
