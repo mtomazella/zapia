@@ -1,5 +1,5 @@
-import { mediaQueries } from "style/mediaQueries";
-import styled from "styled-components";
+import { mediaQueries } from 'style/mediaQueries'
+import styled from 'styled-components'
 
 export const StyledSpace = styled.main`
   display: flex;
@@ -19,6 +19,12 @@ export const StyledSpace = styled.main`
 
   div.MuiCard-root {
     margin: 1rem 0;
+  }
+  div.CardActions-root {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-right: 1.9rem;
   }
 `
 

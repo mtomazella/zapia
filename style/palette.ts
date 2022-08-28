@@ -21,5 +21,12 @@ export const AppPalette = {
     '#EEE',
     '#FFF',
   ],
+  ui: {
+    error: {
+      light: 'ffaaaaa',
+      washed: '#ffc4c4',
+      main: '#Fb3b3b',
+    },
+  },
   brand: {},
 }

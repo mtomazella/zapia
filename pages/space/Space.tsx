@@ -9,14 +9,18 @@ import {
 } from '@mui/material'
 import { Die } from 'components'
 import { ButtonTextField } from 'components/ButtonTextField'
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Column, StyledSpace } from './Space.styled'
 import { faDiceD20 } from '@fortawesome/free-solid-svg-icons'
 import { Situation } from 'components/Situation'
 import { v4 } from 'uuid'
+import { useSituations, useUrlParameters } from 'hooks'
 
 export const Space: React.FC = () => {
+  const { space: spaceName } = useUrlParameters()
+  const { situations } = useSituations({ spaceName })
+
   const [diceExpression, setDiceExpression] = useState('')
   const [isDieRolling, setIsDieRolling] = useState(false)
   const [expressionText, setExpressionText] = useState('')
@@ -24,11 +28,14 @@ export const Space: React.FC = () => {
   const addToExpression = (value: string) =>
     setExpressionText(prev => prev + value + ' ')
 
-  const roll = (expression?: string) => {
-    if (!expression) expression = expressionText
-    setDiceExpression(expression)
-    setIsDieRolling(true)
-  }
+  const roll = useCallback(
+    (expression?: string) => {
+      if (!expression) expression = expressionText
+      setDiceExpression(expression)
+      setIsDieRolling(true)
+    },
+    [expressionText, setDiceExpression, setIsDieRolling]
+  )
 
   return (
     <StyledSpace>
@@ -52,14 +59,7 @@ export const Space: React.FC = () => {
               icon={<FontAwesomeIcon icon={faDiceD20} />}
             />
           </CardContent>
-          <CardActions
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              paddingRight: '1.9rem',
-            }}
-          >
+          <CardActions>
             <Box>
               <IconButton onClick={() => addToExpression('d3')}>
                 <Chip label="D3" />
@@ -90,10 +90,9 @@ export const Space: React.FC = () => {
           </CardActions>
         </Card>
 
-        <Situation
-          situation={{ id: v4(), name: 'Situação teste 1', expression: '3d8+2' }}
-          roll={roll}
-        />
+        {situations.map(situation => (
+          <Situation key={situation.id} situation={situation} roll={roll} />
+        ))}
       </Column>
     </StyledSpace>
   )
