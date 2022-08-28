@@ -25,8 +25,7 @@ export const Die: React.FC<DiceProps> = ({
   }, [shouldRoll])
 
   useEffect(() => {
-    if (shouldRoll && !isRolling)
-      setIsRolling(false)
+    if (shouldRoll && !isRolling) setIsRolling(false)
   }, [isRolling])
 
   return (

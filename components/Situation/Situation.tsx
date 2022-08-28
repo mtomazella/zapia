@@ -1,15 +1,13 @@
-import {
-  faDiceD20,
-  faExclamationCircle,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { CardContent, IconButton } from '@mui/material'
 import React, { useCallback, useEffect, useMemo } from 'react'
-import { TSituation } from 'shared/types'
+
+import { faDiceD20 } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { ErrorOutlineOutlined } from '@mui/icons-material'
+import { CardContent, IconButton } from '@mui/material'
 import RpgRoller from 'roll'
+import { TSituation } from 'shared/types'
 
 import { Row, StyledSituation } from './Situation.styled'
-import { ErrorOutlineOutlined } from '@mui/icons-material'
 
 const { validate } = new RpgRoller()
 
@@ -33,12 +31,12 @@ export const Situation: React.FC<TSituationComponent> = ({
 
   const isValidExpression = useMemo(
     () => validate(currentExpression),
-    [currentExpression]
+    [currentExpression],
   )
 
   const rollCurrentExpression = useCallback(
     () => isValidExpression && roll(currentExpression),
-    [roll, currentExpression]
+    [roll, currentExpression],
   )
 
   return (

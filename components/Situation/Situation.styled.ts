@@ -8,18 +8,18 @@ export const Row = styled.section`
   justify-content: space-between;
 `
 export const StyledSituation = styled(Card)`
-      h3 {
-        margin: 0;
-        word-break: break-all;
-        word-wrap: break-word;
-      }
+  h3 {
+    margin: 0;
+    word-break: break-all;
+    word-wrap: break-word;
+  }
 
-      h4 {
-        margin: 0;
-        color: ${AppPalette.gray[10]};
-        word-break: break-all;
-        word-wrap: break-word;
-      }
+  h4 {
+    margin: 0;
+    color: ${AppPalette.gray[10]};
+    word-break: break-all;
+    word-wrap: break-word;
+  }
 
   .MuiCardContent-root {
     display: flex;

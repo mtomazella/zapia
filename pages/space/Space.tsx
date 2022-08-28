@@ -1,3 +1,7 @@
+import React, { useCallback, useState } from 'react'
+
+import { faDiceD20 } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { AddCircle } from '@mui/icons-material'
 import {
   Box,
@@ -7,15 +11,13 @@ import {
   Chip,
   IconButton,
 } from '@mui/material'
+import { useSituations, useUrlParameters } from 'hooks'
+
 import { Die } from 'components'
 import { ButtonTextField } from 'components/ButtonTextField'
-import React, { useCallback, useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Column, StyledSpace } from './Space.styled'
-import { faDiceD20 } from '@fortawesome/free-solid-svg-icons'
 import { Situation } from 'components/Situation'
-import { v4 } from 'uuid'
-import { useSituations, useUrlParameters } from 'hooks'
+
+import { Column, StyledSpace } from './Space.styled'
 
 export const Space: React.FC = () => {
   const { space: spaceName } = useUrlParameters()
@@ -34,7 +36,7 @@ export const Space: React.FC = () => {
       setDiceExpression(expression)
       setIsDieRolling(true)
     },
-    [expressionText, setDiceExpression, setIsDieRolling]
+    [expressionText, setDiceExpression, setIsDieRolling],
   )
 
   return (

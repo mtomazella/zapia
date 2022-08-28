@@ -17,12 +17,7 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": [
-    "react",
-    "@typescript-eslint",
-    "prettier",
-    "simple-import-sort"
-  ],
+  "plugins": ["react", "@typescript-eslint", "prettier", "simple-import-sort"],
   "rules": {
     "prettier/prettier": [
       "error",
@@ -40,7 +35,7 @@
     "max-len": [
       "error",
       {
-        "code": 120
+        "code": 80
       }
     ],
     "simple-import-sort/imports": [
