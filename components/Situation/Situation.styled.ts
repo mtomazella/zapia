@@ -21,7 +21,7 @@ export const StyledSituation = styled(Card)`
     word-wrap: break-word;
   }
 
-  .MuiCardContent-root {
+  > .MuiCardContent-root {
     display: flex;
     flex-direction: column;
     justify-content: space-between;

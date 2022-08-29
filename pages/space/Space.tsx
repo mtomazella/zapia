@@ -35,6 +35,7 @@ export const Space: React.FC = () => {
       if (!expression) expression = expressionText
       setDiceExpression(expression)
       setIsDieRolling(true)
+      scrollTo({ top: 0 })
     },
     [expressionText, setDiceExpression, setIsDieRolling],
   )
@@ -85,10 +86,11 @@ export const Space: React.FC = () => {
                 <Chip color="success" label="D20" />
               </IconButton>
             </Box>
-
-            <IconButton aria-label="add">
-              <AddCircle />
-            </IconButton>
+            <div>
+              <IconButton aria-label="add">
+                <AddCircle />
+              </IconButton>
+            </div>
           </CardActions>
         </Card>
 

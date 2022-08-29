@@ -19,14 +19,17 @@ export const useDieRoll = ({
 
   const expression = useMemo(
     () => (!rawExpression ? '1d20' : rawExpression),
-    [rawExpression]
+    [rawExpression],
   )
 
   const roll = useCallback(() => {
     if (!rpgRoller.validate(expression)) {
       setIsRolling(false)
+      setError('Expressão inválida')
       return
     }
+
+    console.log(expression)
 
     setError(undefined)
     setIsRolling(true)
@@ -34,7 +37,7 @@ export const useDieRoll = ({
       setResult(rpgRoller.roll(expression).result)
       setIsRolling(false)
     }, duration)
-  }, [expression, duration])
+  }, [expression, duration, setError, setIsRolling, setResult])
 
   // useEffect(() => {
   //   roll()

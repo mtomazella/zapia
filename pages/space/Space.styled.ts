@@ -1,6 +1,17 @@
 import { mediaQueries } from 'style/mediaQueries'
 import styled from 'styled-components'
 
+const diceBoxHeight = '15rem'
+
+export const Column = styled.section`
+  width: 100%;
+  padding: 2rem 1rem;
+
+  @media ${mediaQueries.desktop} {
+    width: 50%;
+  }
+`
+
 export const StyledSpace = styled.main`
   display: flex;
   flex-direction: column;
@@ -14,25 +25,23 @@ export const StyledSpace = styled.main`
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: 15rem;
+    min-height: ${diceBoxHeight};
   }
 
   div.MuiCard-root {
     margin: 1rem 0;
-  }
-  div.CardActions-root {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding-right: 1.9rem;
-  }
-`
 
-export const Column = styled.section`
-  width: 100%;
-  padding: 2rem 1rem;
+    div.MuiCardActions-root {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-right: 1.9rem;
+      width: 100%;
 
-  @media ${mediaQueries.desktop} {
-    width: 50%;
+      > div:last-of-type {
+        padding-top: 5px;
+      }
+    }
   }
 `
