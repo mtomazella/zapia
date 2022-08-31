@@ -7,6 +7,42 @@ export const Row = styled.section`
   flex-direction: row;
   justify-content: space-between;
 `
+export const Control = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    > h3 > .MuiChip-root {
+      width: fit-content;
+      margin-left: 0.5rem;
+    }
+  }
+
+  > p {
+    margin: 0rem 0 1rem 0;
+  }
+`
+
+export const Variable = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 0.5rem;
+
+  b {
+    margin-right: 0.5rem;
+  }
+
+  p {
+    margin: 0.2rem;
+  }
+`
+
 export const StyledSituation = styled(Card)`
   h3 {
     margin: 0;
@@ -38,6 +74,38 @@ export const StyledSituation = styled(Card)`
 
       label {
         margin-left: 0.5rem;
+      }
+    }
+
+    :last-of-type {
+      display: block;
+      padding-top: 0;
+      padding-bottom: 0.5rem;
+    }
+
+    > .MuiAccordion-root {
+      font-size: 0.8rem;
+
+      > .MuiAccordionSummary-root {
+        padding: 0;
+        color: ${AppPalette.brand.teal.main};
+        min-height: fit-content;
+
+        label {
+          padding-left: 0.5rem;
+        }
+
+        > .MuiAccordionSummary-content.Mui-expanded {
+          margin: 0 0 0.5rem;
+        }
+      }
+
+      :first-of-type .MuiAccordionSummary-content.Mui-expanded {
+        margin: 0.75rem 0;
+      }
+
+      :first-of-type .MuiAccordionDetails-root {
+        padding: 0;
       }
     }
   }

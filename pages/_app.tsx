@@ -1,18 +1,20 @@
 import React from 'react'
 
-import type { AppProps } from 'next/app'
-import { GlobalStyle } from 'style/global'
+import { CssBaseline } from '@mui/material'
 import {
   createTheme,
   ThemeProvider as MaterialThemeProvider,
 } from '@mui/material/styles'
+import type { AppProps } from 'next/app'
+import { GlobalStyle } from 'style/global'
+import { AppPalette } from 'style/palette'
 
 import './../style/dice.scss'
-import { CssBaseline } from '@mui/material'
 
 const theme = createTheme({
   palette: {
     mode: 'dark',
+    primary: AppPalette.brand.teal,
   },
 })
 

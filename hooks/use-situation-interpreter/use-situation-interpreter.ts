@@ -19,7 +19,13 @@ export const useSituationInterpreter = ({
   const getVariablesToReplace = (expr: string) =>
     Array.from(expr.matchAll(/\[(.*?)\]/g)).map(e => e[1])
 
-  const getVariableValue = (key: string) => variables[key.toLowerCase()]
+  const getVariableValue = (key: string) => {
+    const foundKey = Object.keys(variables).find(
+      k => k.toLowerCase() === key.toLowerCase(),
+    )
+    if (!foundKey) return null
+    return variables[foundKey]
+  }
 
   const preparedExpression = useMemo(() => {
     setError(null)

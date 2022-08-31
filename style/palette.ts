@@ -28,5 +28,11 @@ export const AppPalette = {
       main: '#Fb3b3b',
     },
   },
-  brand: {},
+  brand: {
+    teal: {
+      bright: '#47ebd0',
+      main: '#14b89d',
+      dark: '#0a5c4e',
+    },
+  },
 }

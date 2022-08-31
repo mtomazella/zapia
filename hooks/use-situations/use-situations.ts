@@ -19,8 +19,8 @@ export const useSituations = ({
       name: 'AAAAAAAAAAAAAAAAAAAAAAAAA',
       expression: '3d8+5+[FOR]+[PRE]',
       variables: {
-        for: '2',
-        pre: '1',
+        FOR: '2',
+        PRE: '1',
       },
       controls: [
         {
