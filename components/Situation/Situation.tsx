@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 
 import { faDiceD20 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -30,20 +30,24 @@ type TSituationComponent = {
 export const Situation: React.FC<TSituationComponent> = ({
   situation,
   roll,
+  save,
 }) => {
-  const { name, controls, variables } = situation
+  const { name, controls, variables } = useMemo(() => situation, [situation])
   const { expression, displayExpression, error } = useSituationInterpreter({
     situation,
   })
-
-  // useEffect(() => {
-  //   save(situation)
-  // })
 
   const rollCurrentExpression = useCallback(
     () => !error && roll(expression),
     [roll, expression],
   )
+
+  const toggleControl = (name: string) => {
+    if (!situation.controls) return
+    const index = situation.controls.findIndex(e => e.name === name)
+    situation.controls[index].active = !situation.controls[index].active
+    save(situation)
+  }
 
   return (
     <StyledSituation>
@@ -89,7 +93,10 @@ export const Situation: React.FC<TSituationComponent> = ({
                         size="small"
                       />
                     </h3>
-                    <Switch checked={active} />
+                    <Switch
+                      checked={active}
+                      onClick={() => toggleControl(name)}
+                    />
                   </div>
                   <p>{value}</p>
                 </Control>

@@ -12,6 +12,7 @@ import {
   IconButton,
 } from '@mui/material'
 import { useSituations, useUrlParameters } from 'hooks'
+import { TSituation } from 'shared/types'
 
 import { Die } from 'components'
 import { ButtonTextField } from 'components/ButtonTextField'
@@ -21,7 +22,7 @@ import { Column, StyledSpace } from './Space.styled'
 
 export const Space: React.FC = () => {
   const { space: spaceName } = useUrlParameters()
-  const { situations } = useSituations({ spaceName })
+  const { situations, updateById } = useSituations({ spaceName })
 
   const [diceExpression, setDiceExpression] = useState('')
   const [isDieRolling, setIsDieRolling] = useState(false)
@@ -29,6 +30,11 @@ export const Space: React.FC = () => {
 
   const addToExpression = (value: string) =>
     setExpressionText(prev => prev + value + ' ')
+
+  const save = useCallback(
+    (situation: TSituation) => updateById(situation),
+    [updateById],
+  )
 
   const roll = useCallback(
     (expression?: string) => {
@@ -95,7 +101,12 @@ export const Space: React.FC = () => {
         </Card>
 
         {situations.map(situation => (
-          <Situation key={situation.id} situation={situation} roll={roll} />
+          <Situation
+            key={situation.id}
+            situation={situation}
+            save={save}
+            roll={roll}
+          />
         ))}
       </Column>
     </StyledSpace>
