@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { TSituation } from 'shared/types'
 import { v4 } from 'uuid'
@@ -10,6 +10,8 @@ type TUseSituationsResponse = {
   situations: TSituation[]
   updateById: (situation: TSituation) => void
 }
+
+const LOCAL_STORAGE_SITUATIONS_KEY = 'situations'
 
 const initialSituations: TSituation[] = [
   {
@@ -52,7 +54,32 @@ const initialSituations: TSituation[] = [
 export const useSituations = ({
   spaceName,
 }: TUseSituationsProps): TUseSituationsResponse => {
-  const [situations, setSituations] = useState(initialSituations)
+  const saveInLocalStorage = (sits: TSituation[]) =>
+    localStorage.setItem(LOCAL_STORAGE_SITUATIONS_KEY, JSON.stringify(sits))
+
+  const getLocalStorageValue = () => {
+    const value = localStorage.getItem(LOCAL_STORAGE_SITUATIONS_KEY)
+    if (!value) {
+      saveInLocalStorage(initialSituations)
+      return initialSituations
+    }
+    return JSON.parse(value)
+  }
+
+  const [situations, setSituations] = useState<TSituation[]>([])
+
+  const setSituationsAndSave = useCallback(
+    (sits: TSituation[]) => {
+      setSituations(sits)
+      saveInLocalStorage(sits)
+    },
+    [setSituations],
+  )
+
+  useEffect(() => {
+    if (window && typeof window !== undefined)
+      setSituations(getLocalStorageValue())
+  }, [])
 
   const orderControls = (sit: TSituation) => {
     if (!sit.controls) sit.controls = []
@@ -74,9 +101,9 @@ export const useSituations = ({
       const newSituations = [...situations]
       const index = newSituations.findIndex(e => e.id === situation.id)
       newSituations[index] = { ...newSituations[index], ...situation }
-      setSituations(newSituations)
+      setSituationsAndSave(newSituations)
     },
-    [situations, setSituations],
+    [situations, setSituationsAndSave],
   )
 
   return {
