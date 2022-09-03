@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { TSituation } from 'shared/types'
 import { v4 } from 'uuid'
 
 type TUseSituationsProps = {
-  spaceName: string
+  spaceName?: string
 }
 type TUseSituationsResponse = {
   situations: TSituation[]
@@ -13,7 +13,7 @@ type TUseSituationsResponse = {
 
 const LOCAL_STORAGE_SITUATIONS_KEY = 'situations'
 
-const initialSituations: TSituation[] = [
+const testInitialSituations: TSituation[] = [
   {
     id: v4(),
     name: 'AAAAAAAAAAAAAAAAAAAAAAAAA',
@@ -51,14 +51,21 @@ const initialSituations: TSituation[] = [
   },
 ]
 
+const initialSituations: TSituation[] = []
+
 export const useSituations = ({
   spaceName,
 }: TUseSituationsProps): TUseSituationsResponse => {
   const saveInLocalStorage = (sits: TSituation[]) =>
-    localStorage.setItem(LOCAL_STORAGE_SITUATIONS_KEY, JSON.stringify(sits))
+    localStorage.setItem(
+      `${spaceName ?? ''}${LOCAL_STORAGE_SITUATIONS_KEY}`,
+      JSON.stringify(sits),
+    )
 
   const getLocalStorageValue = () => {
-    const value = localStorage.getItem(LOCAL_STORAGE_SITUATIONS_KEY)
+    const value = localStorage.getItem(
+      `${spaceName ?? ''}${LOCAL_STORAGE_SITUATIONS_KEY}`,
+    )
     if (!value) {
       saveInLocalStorage(initialSituations)
       return initialSituations
@@ -79,7 +86,7 @@ export const useSituations = ({
   useEffect(() => {
     if (window && typeof window !== undefined)
       setSituations(getLocalStorageValue())
-  }, [])
+  }, [spaceName])
 
   const orderControls = (sit: TSituation) => {
     if (!sit.controls) sit.controls = []

@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router'
-import React from 'react'
 
 export const useUrlParameters = (): {
   space?: string
@@ -7,6 +6,6 @@ export const useUrlParameters = (): {
   const { query } = useRouter()
 
   return {
-    space: query.space as string | undefined
+    space: query.space as string | undefined,
   }
 }
