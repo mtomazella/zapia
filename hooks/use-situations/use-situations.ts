@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 
+import { isEmpty } from 'lodash'
 import { TSituation } from 'shared/types'
+import { v4 } from 'uuid'
 
 type TUseSituationsProps = {
   spaceName?: string
@@ -9,7 +11,7 @@ type TUseSituationsProps = {
 type TUseSituationsResponse = {
   situations: TSituation[]
   situation?: TSituation
-  updateById: (situation: TSituation) => void
+  updateOrInsert: (situation: TSituation | Partial<TSituation>) => void
 }
 
 const LOCAL_STORAGE_SITUATIONS_KEY = 'situations'
@@ -72,11 +74,24 @@ export const useSituations = ({
 
   const getSituation = (id: string) => situations[getSituationIndex(id)]
 
-  const updateById = useCallback(
-    (situation: TSituation) => {
+  const updateOrInsert = useCallback(
+    (situation: TSituation | Partial<TSituation>) => {
       const newSituations = [...situations]
-      const index = newSituations.findIndex(e => e.id === situation.id)
-      newSituations[index] = { ...newSituations[index], ...situation }
+
+      if (situation.id) {
+        const index = newSituations.findIndex(e => e.id === situation.id)
+        newSituations[index] = { ...newSituations[index], ...situation }
+      } else {
+        const { name, expression, variables, controls } = situation
+        newSituations.push({
+          id: v4(),
+          name: isEmpty(name) ? 'Nova Situação' : (name as string),
+          expression: isEmpty(expression) ? '1d20' : (expression as string),
+          variables: variables ?? {},
+          controls: controls ?? [],
+        })
+      }
+
       setSituationsAndSave(newSituations)
     },
     [situations, setSituationsAndSave],
@@ -85,6 +100,6 @@ export const useSituations = ({
   return {
     situations: sortSituations(situations),
     situation: situationId ? getSituation(situationId) : undefined,
-    updateById,
+    updateOrInsert,
   }
 }

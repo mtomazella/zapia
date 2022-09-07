@@ -24,7 +24,9 @@ import { Column, StyledSpace } from './Space.styled'
 export const Space: React.FC = () => {
   const { push } = useRouter()
   const { space: spaceName } = useUrlParameters()
-  const { situations, updateById } = useSituations({ spaceName })
+  const { situations, updateOrInsert: updateById } = useSituations({
+    spaceName,
+  })
 
   const [diceExpression, setDiceExpression] = useState('')
   const [isDieRolling, setIsDieRolling] = useState(false)
@@ -50,6 +52,13 @@ export const Space: React.FC = () => {
 
   const goToEditPage = (id: string) =>
     push(`/situation?id=${id}${spaceName ? `&space=${spaceName}` : ''}`)
+
+  const addNewSituation = () =>
+    push(
+      `/situation${
+        expressionText ? `?initialExpression=${expressionText}` : ''
+      }`,
+    )
 
   return (
     <StyledSpace>
@@ -98,7 +107,7 @@ export const Space: React.FC = () => {
               </IconButton>
             </Box>
             <div>
-              <IconButton aria-label="add">
+              <IconButton aria-label="add" onClick={addNewSituation}>
                 <AddCircle />
               </IconButton>
             </div>

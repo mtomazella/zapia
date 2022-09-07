@@ -16,20 +16,23 @@ type Form = {
 }
 
 export const SituationPage: React.FC = () => {
-  const { replace, back } = useRouter()
-  const { space: spaceName, id: situationId } = useUrlParameters()
+  const { back } = useRouter()
+  const {
+    space: spaceName,
+    id: situationId,
+    initialExpression,
+  } = useUrlParameters()
 
-  useEffect(() => {
-    if (!situationId) replace(`/space${spaceName ? '?space=' + spaceName : ''}`)
-  }, [situationId])
-
-  const { situation, updateById } = useSituations({ spaceName, situationId })
+  const { situation, updateOrInsert: updateById } = useSituations({
+    spaceName,
+    situationId,
+  })
   const { register, reset, handleSubmit } = useForm<Form>()
 
   useEffect(() => {
     reset({
-      name: situation?.name,
-      expression: situation?.expression,
+      name: situation?.name ?? '',
+      expression: situation?.expression ?? initialExpression ?? '1d20',
     })
   }, [situation])
 
