@@ -32,7 +32,7 @@ export const StyledSpace = styled.main`
     margin: 1rem 0;
   }
 
-  > div.MuiCard-root > div.MuiCardActions-root {
+  .expression-builder > div.MuiCardActions-root {
     display: flex;
     flex-direction: row;
     justify-content: space-between;

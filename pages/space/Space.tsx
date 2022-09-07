@@ -33,7 +33,12 @@ export const Space: React.FC = () => {
   const [expressionText, setExpressionText] = useState('')
 
   const addToExpression = (value: string) =>
-    setExpressionText(prev => prev + value + ' ')
+    setExpressionText(
+      prev =>
+        `${prev}${
+          prev.endsWith('+') || prev.endsWith('-') || prev === '' ? '1' : ''
+        }${value}`,
+    )
 
   const save = useCallback(
     (situation: TSituation) => updateById(situation),
@@ -48,6 +53,11 @@ export const Space: React.FC = () => {
       scrollTo({ top: 0 })
     },
     [expressionText, setDiceExpression, setIsDieRolling],
+  )
+
+  const rollNoSituation = useCallback(
+    () => roll(expressionText),
+    [expressionText, roll],
   )
 
   const goToEditPage = (id: string) =>
@@ -72,11 +82,11 @@ export const Space: React.FC = () => {
         </div>
       </Column>
       <Column>
-        <Card>
+        <Card className="expression-builder">
           <CardContent>
             <ButtonTextField
               label="Rodar Dado"
-              actionFn={roll}
+              actionFn={rollNoSituation}
               value={expressionText}
               onChange={setExpressionText}
               icon={<FontAwesomeIcon icon={faDiceD20} />}

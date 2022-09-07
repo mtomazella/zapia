@@ -44,7 +44,7 @@ export const SituationPage: React.FC = () => {
   return (
     <StyledSituationPage onSubmit={handleSubmit(onSubmit)}>
       <section>
-        <Die isRolling rollForever />
+        <Die isRolling rollForever animationDuration={10000} />
         <TextField
           label="Nome"
           InputLabelProps={{ shrink: true }}

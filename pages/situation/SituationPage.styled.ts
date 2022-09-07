@@ -1,6 +1,9 @@
 import styled from 'styled-components'
 
 export const StyledSituationPage = styled.form`
+  max-width: 800px;
+  margin: auto;
+
   > section {
     width: 100%;
 
@@ -23,6 +26,7 @@ export const StyledSituationPage = styled.form`
       flex-direction: column;
       position: fixed;
       bottom: 0;
+      left: 0;
 
       .MuiButton-root {
         border-radius: 0;
