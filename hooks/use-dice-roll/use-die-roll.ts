@@ -11,7 +11,7 @@ type UseDieRollParams = {
 
 export const useDieRoll = ({
   expression: rawExpression = '1d20',
-  duration = 2000,
+  duration = 1000,
 }: UseDieRollParams) => {
   const [isRolling, setIsRolling] = useState(false)
   const [result, setResult] = useState<number | undefined>(undefined)

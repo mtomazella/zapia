@@ -10,7 +10,7 @@ $bg-color-2: #d12cb0;
 $side: 50px;
 $sqrt3: 1.732;
 $tilt: 52.62deg; // asin(tan(54deg)/sqrt(3))
-$capheight: -1.051 * $side; // sqrt(3-tan(54deg)^2 ) 
+$capheight: -1.051 * $side; // sqrt(3-tan(54deg)^2 )
 $triheight: $side * $sqrt3;
 $vshift: $capheight + $triheight / 2;
 
@@ -20,21 +20,21 @@ $sidetilt: 10.81deg; // asin( (sec(54deg)-tan(54deg))/sqrt(3) )
 $sideheight: $outerradius; // sqrt(3-(sec(54deg)-tan(54deg))^2)
 $vshift2: $sideheight + $triheight - $vshift;
 
-.container{
+.container {
   perspective: 1000px;
 }
 
 .rolling {
-  animation: spin 2s infinite linear;
+  animation: spin 1s infinite linear;
 }
 
-.dice{
+.dice {
   position: relative;
   width: $side * 2;
   height: $side * 2;
   //background: rgba(0,0,0,1);
   transform-style: preserve-3d;
-  
+
   [class^='side'] {
     position: absolute;
     left: 0;
@@ -44,42 +44,40 @@ $vshift2: $sideheight + $triheight - $vshift;
     border-right: $side solid transparent;
     transform-origin: 50% 0%;
   }
-  
+
   @for $i from 1 through 20 {
-    .side-#{$i}{
-      border-bottom-color: hsla(170,80,(4 * $i), 0.60);
+    .side-#{$i} {
+      border-bottom-color: hsla(170, 80, (4 * $i), 0.6);
     }
   }
-  
-  @for $i from 1 through 5 { // top
+
+  @for $i from 1 through 5 {
+    // top
     .side-#{$i} {
-      transform: 
-        translateY($vshift) 
-        rotateY(#{$i * 72deg}) 
-        rotateX($tilt);
-    }       
+      transform: translateY($vshift) rotateY(#{$i * 72deg}) rotateX($tilt);
+    }
   }
-  @for $i from 6 through 10 { // bottom
+  @for $i from 6 through 10 {
+    // bottom
     .side-#{$i} {
-      transform: 
-        translateY($vshift2) 
-        rotateY(#{$i * 72deg + 36deg}) 
+      transform: translateY($vshift2)
+        rotateY(#{$i * 72deg + 36deg})
         rotateX(#{180deg - $tilt});
-    }		
+    }
   }
-  @for $i from 11 through 15 { // bottom sides
+  @for $i from 11 through 15 {
+    // bottom sides
     .side-#{$i} {
-      transform: 
-        translateY(#{$triheight / 2}) 
-        rotateY(#{$i * 72deg + 36deg}) 
+      transform: translateY(#{$triheight / 2})
+        rotateY(#{$i * 72deg + 36deg})
         translateZ($outerradius)
         rotateX(-$sidetilt);
     }
   }
-  @for $i from 16 through 20 { // top sides
+  @for $i from 16 through 20 {
+    // top sides
     .side-#{$i} {
-      transform: 
-        translateY(#{$triheight / 2 + $sideheight}) 
+      transform: translateY(#{$triheight / 2 + $sideheight})
         rotateY(#{$i * 72deg})
         rotateZ(180deg)
         translateZ($outerradius)
@@ -88,12 +86,11 @@ $vshift2: $sideheight + $triheight - $vshift;
   }
 }
 
-
 @keyframes spin {
-  0% { 
+  0% {
     transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
   }
-  100% { 
+  100% {
     transform: rotateX(360deg) rotateY(720deg) rotateZ(1080deg);
   }
 }
