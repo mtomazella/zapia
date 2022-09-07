@@ -30,18 +30,18 @@ export const StyledSpace = styled.main`
 
   div.MuiCard-root {
     margin: 1rem 0;
+  }
 
-    div.MuiCardActions-root {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: flex-start;
-      padding-right: 1.9rem;
-      width: 100%;
+  > div.MuiCard-root > div.MuiCardActions-root {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-right: 1.9rem;
+    width: 100%;
 
-      > div:last-of-type {
-        padding-top: 5px;
-      }
+    > div:last-of-type {
+      padding-top: 5px;
     }
   }
 `

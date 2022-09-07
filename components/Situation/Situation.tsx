@@ -2,11 +2,17 @@ import React, { useCallback, useMemo } from 'react'
 
 import { faDiceD20 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { DataArray, ErrorOutlineOutlined, Settings } from '@mui/icons-material'
+import {
+  DataArray,
+  Edit,
+  ErrorOutlineOutlined,
+  Settings,
+} from '@mui/icons-material'
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  CardActions,
   CardContent,
   Chip,
   IconButton,
@@ -25,14 +31,19 @@ type TSituationComponent = {
   situation: TSituation
   roll: (expression: string) => void
   save: (situation: TSituation) => void
+  edit: (id: string) => void
 }
 
 export const Situation: React.FC<TSituationComponent> = ({
   situation,
   roll,
   save,
+  edit,
 }) => {
-  const { name, controls, variables } = useMemo(() => situation, [situation])
+  const { id, name, controls, variables } = useMemo(
+    () => situation,
+    [situation],
+  )
   const { expression, displayExpression, error } = useSituationInterpreter({
     situation,
   })
@@ -48,6 +59,8 @@ export const Situation: React.FC<TSituationComponent> = ({
     situation.controls[index].active = !situation.controls[index].active
     save(situation)
   }
+
+  const onEdit = () => edit(id)
 
   return (
     <StyledSituation>
@@ -123,6 +136,11 @@ export const Situation: React.FC<TSituationComponent> = ({
           </Accordion>
         )}
       </CardContent>
+      <CardActions>
+        <IconButton onClick={onEdit}>
+          <Edit htmlColor={AppPalette.brand.yellow.dark} fontSize="small" />
+        </IconButton>
+      </CardActions>
     </StyledSituation>
   )
 }

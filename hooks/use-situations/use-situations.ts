@@ -1,60 +1,24 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import { TSituation } from 'shared/types'
-import { v4 } from 'uuid'
 
 type TUseSituationsProps = {
   spaceName?: string
+  situationId?: string
 }
 type TUseSituationsResponse = {
   situations: TSituation[]
+  situation?: TSituation
   updateById: (situation: TSituation) => void
 }
 
 const LOCAL_STORAGE_SITUATIONS_KEY = 'situations'
 
-const testInitialSituations: TSituation[] = [
-  {
-    id: v4(),
-    name: 'AAAAAAAAAAAAAAAAAAAAAAAAA',
-    expression: '3d8+5+[FOR]+[PRE]',
-    variables: {
-      FOR: '2',
-      PRE: '1',
-    },
-    controls: [
-      {
-        active: true,
-        name: 'Arma amaldiçoada',
-        controlType: 'boolean',
-        actionType: 'add',
-        value: '1d6',
-      },
-      {
-        active: false,
-        name: 'Muito foda',
-        controlType: 'boolean',
-        actionType: 'substitute',
-        value: '90d20',
-      },
-    ],
-  },
-  {
-    id: v4(),
-    name: 'óvwhejiovujsçvjneivuj',
-    expression: '390816397',
-  },
-  {
-    id: v4(),
-    name: 'çivueviuehvieuh',
-    expression: '3d8+4141414144',
-  },
-]
-
 const initialSituations: TSituation[] = []
 
 export const useSituations = ({
   spaceName,
+  situationId,
 }: TUseSituationsProps): TUseSituationsResponse => {
   const saveInLocalStorage = (sits: TSituation[]) =>
     localStorage.setItem(
@@ -103,6 +67,11 @@ export const useSituations = ({
     return sits.sort((s1, s2) => s1.name.localeCompare(s2.name))
   }
 
+  const getSituationIndex = (id: string) =>
+    situations.findIndex(e => e.id === id)
+
+  const getSituation = (id: string) => situations[getSituationIndex(id)]
+
   const updateById = useCallback(
     (situation: TSituation) => {
       const newSituations = [...situations]
@@ -115,6 +84,7 @@ export const useSituations = ({
 
   return {
     situations: sortSituations(situations),
+    situation: situationId ? getSituation(situationId) : undefined,
     updateById,
   }
 }

@@ -12,6 +12,7 @@ import {
   IconButton,
 } from '@mui/material'
 import { useSituations, useUrlParameters } from 'hooks'
+import { useRouter } from 'next/router'
 import { TSituation } from 'shared/types'
 
 import { Die } from 'components'
@@ -21,6 +22,7 @@ import { Situation } from 'components/Situation'
 import { Column, StyledSpace } from './Space.styled'
 
 export const Space: React.FC = () => {
+  const { push } = useRouter()
   const { space: spaceName } = useUrlParameters()
   const { situations, updateById } = useSituations({ spaceName })
 
@@ -45,6 +47,9 @@ export const Space: React.FC = () => {
     },
     [expressionText, setDiceExpression, setIsDieRolling],
   )
+
+  const goToEditPage = (id: string) =>
+    push(`/situation?id=${id}${spaceName ? `&space=${spaceName}` : ''}`)
 
   return (
     <StyledSpace>
@@ -106,6 +111,7 @@ export const Space: React.FC = () => {
             situation={situation}
             save={save}
             roll={roll}
+            edit={goToEditPage}
           />
         ))}
       </Column>

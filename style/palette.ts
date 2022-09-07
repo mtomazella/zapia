@@ -34,5 +34,10 @@ export const AppPalette = {
       main: '#14b89d',
       dark: '#0a5c4e',
     },
+    yellow: {
+      bright: '#fffa63',
+      main: '#ede613',
+      dark: '#bdb71e',
+    },
   },
 }

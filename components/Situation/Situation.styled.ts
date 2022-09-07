@@ -61,6 +61,7 @@ export const StyledSituation = styled(Card)`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    padding-bottom: 0;
 
     > ${Row}.invalid-expression {
       justify-content: left;
@@ -75,12 +76,6 @@ export const StyledSituation = styled(Card)`
       label {
         margin-left: 0.5rem;
       }
-    }
-
-    :last-of-type {
-      display: block;
-      padding-top: 0;
-      padding-bottom: 0.5rem;
     }
 
     > .MuiAccordion-root {
@@ -108,5 +103,14 @@ export const StyledSituation = styled(Card)`
         padding: 0;
       }
     }
+  }
+
+  > .MuiCardActions-root {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    width: 100%;
+    padding-top: 0;
+    padding-right: 1rem;
   }
 `
