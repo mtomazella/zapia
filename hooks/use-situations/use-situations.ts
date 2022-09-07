@@ -4,6 +4,8 @@ import { isEmpty } from 'lodash'
 import { TSituation } from 'shared/types'
 import { v4 } from 'uuid'
 
+import { testInitialSituations } from './testSituations'
+
 type TUseSituationsProps = {
   spaceName?: string
   situationId?: string
@@ -12,6 +14,7 @@ type TUseSituationsResponse = {
   situations: TSituation[]
   situation?: TSituation
   updateOrInsert: (situation: TSituation | Partial<TSituation>) => void
+  deleteSituation: (id: string) => void
 }
 
 const LOCAL_STORAGE_SITUATIONS_KEY = 'situations'
@@ -38,6 +41,10 @@ export const useSituations = ({
     }
     return JSON.parse(value)
   }
+
+  // DEBUG  ----------------------
+  // useEffect(() => saveInLocalStorage(testInitialSituations))
+  // -----------------------------
 
   const [situations, setSituations] = useState<TSituation[]>([])
 
@@ -97,9 +104,16 @@ export const useSituations = ({
     [situations, setSituationsAndSave],
   )
 
+  const deleteSituation = useCallback(
+    (id: string) =>
+      setSituationsAndSave([...situations].filter(s => s.id !== id)),
+    [situations],
+  )
+
   return {
     situations: sortSituations(situations),
     situation: situationId ? getSituation(situationId) : undefined,
     updateOrInsert,
+    deleteSituation,
   }
 }

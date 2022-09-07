@@ -3,7 +3,9 @@ import React, { useCallback, useMemo } from 'react'
 import { faDiceD20 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
+  CopyAll,
   DataArray,
+  Delete,
   Edit,
   ErrorOutlineOutlined,
   Settings,
@@ -32,6 +34,7 @@ type TSituationComponent = {
   roll: (expression: string) => void
   save: (situation: TSituation) => void
   edit: (id: string) => void
+  deleteFn: (id: string) => void
 }
 
 export const Situation: React.FC<TSituationComponent> = ({
@@ -39,6 +42,7 @@ export const Situation: React.FC<TSituationComponent> = ({
   roll,
   save,
   edit,
+  deleteFn,
 }) => {
   const { id, name, controls, variables } = useMemo(
     () => situation,
@@ -61,6 +65,7 @@ export const Situation: React.FC<TSituationComponent> = ({
   }
 
   const onEdit = () => edit(id)
+  const onDelete = () => deleteFn(id)
 
   return (
     <StyledSituation>
@@ -137,6 +142,12 @@ export const Situation: React.FC<TSituationComponent> = ({
         )}
       </CardContent>
       <CardActions>
+        <IconButton onClick={onDelete}>
+          <Delete htmlColor={AppPalette.ui.error.main} fontSize="small" />
+        </IconButton>
+        <IconButton>
+          <CopyAll color="secondary" fontSize="small" />
+        </IconButton>
         <IconButton onClick={onEdit}>
           <Edit htmlColor={AppPalette.brand.yellow.dark} fontSize="small" />
         </IconButton>

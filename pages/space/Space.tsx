@@ -24,7 +24,11 @@ import { Column, StyledSpace } from './Space.styled'
 export const Space: React.FC = () => {
   const { push } = useRouter()
   const { space: spaceName } = useUrlParameters()
-  const { situations, updateOrInsert: updateById } = useSituations({
+  const {
+    situations,
+    updateOrInsert: updateById,
+    deleteSituation,
+  } = useSituations({
     spaceName,
   })
 
@@ -131,6 +135,7 @@ export const Space: React.FC = () => {
             save={save}
             roll={roll}
             edit={goToEditPage}
+            deleteFn={deleteSituation}
           />
         ))}
       </Column>
