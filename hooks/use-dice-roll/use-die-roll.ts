@@ -23,25 +23,24 @@ export const useDieRoll = ({
   )
 
   const roll = useCallback(() => {
+    setError(undefined)
+    setIsRolling(true)
+
     if (!rpgRoller.validate(expression)) {
-      setIsRolling(false)
-      setError('Expressão inválida')
+      setTimeout(() => {
+        setIsRolling(false)
+        setError('Expressão inválida')
+      })
       return
     }
 
     console.log(expression)
 
-    setError(undefined)
-    setIsRolling(true)
     setTimeout(() => {
       setResult(rpgRoller.roll(expression).result)
       setIsRolling(false)
     }, duration)
   }, [expression, duration, setError, setIsRolling, setResult])
-
-  // useEffect(() => {
-  //   roll()
-  // }, [])
 
   return {
     roll,
