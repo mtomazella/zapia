@@ -20,7 +20,7 @@
   "plugins": ["react", "@typescript-eslint", "prettier", "simple-import-sort"],
   "rules": {
     "prettier/prettier": [
-      "warning",
+      "warn",
       {
         "trailingComma": "all",
         "semi": false,
