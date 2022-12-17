@@ -132,9 +132,9 @@ export const Situation: React.FC<TSituationComponent> = ({
               <label>Variáveis</label>
             </AccordionSummary>
             <AccordionDetails>
-              {Object.keys(variables).map(key => (
+              {variables.map(({ key, value }) => (
                 <Variable key={key}>
-                  <b>{key}</b> <p>{variables[key]}</p>
+                  <b>{key}</b> <p>{value}</p>
                 </Variable>
               ))}
             </AccordionDetails>

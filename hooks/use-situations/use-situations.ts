@@ -43,7 +43,7 @@ export const useSituations = ({
   }
 
   // DEBUG  ----------------------
-  useEffect(() => saveInLocalStorage(testInitialSituations))
+  // useEffect(() => saveInLocalStorage(testInitialSituations))
   // -----------------------------
 
   const [situations, setSituations] = useState<TSituation[]>([])
@@ -94,7 +94,7 @@ export const useSituations = ({
           id: v4(),
           name: isEmpty(name) ? 'Nova Situação' : (name as string),
           expression: isEmpty(expression) ? '1d20' : (expression as string),
-          variables: variables ?? {},
+          variables: variables ?? [],
           controls: controls ?? [],
         })
       }

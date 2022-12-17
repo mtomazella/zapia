@@ -6,10 +6,16 @@ export const testInitialSituations: TSituation[] = [
     id: v4(),
     name: 'AAAAAAAAAAAAAAAAAAAAAAAAA',
     expression: '3d8+5+[FOR]+[PRE]',
-    variables: {
-      FOR: '2',
-      PRE: '1',
-    },
+    variables: [
+      {
+        key: 'FOR',
+        value: '2',
+      },
+      {
+        key: 'PRE',
+        value: '1',
+      },
+    ],
     controls: [
       {
         active: true,

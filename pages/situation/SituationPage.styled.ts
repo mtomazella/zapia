@@ -8,11 +8,17 @@ export const StyledSituationPage = styled.form`
     width: 100%;
 
     :not(.form-buttons) {
-      padding: 1rem;
+      padding: 1rem 1rem 10rem 1rem;
 
       > div:first-of-type {
         margin: 2rem 0;
         transform: scale(0.5);
+      }
+
+      > div.section-title {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
       }
 
       > .MuiTextField-root {
@@ -32,10 +38,6 @@ export const StyledSituationPage = styled.form`
           width: 100%;
         }
       }
-
-      > button.MuiIconButton-root {
-        float: right;
-      }
     }
 
     &.form-buttons {
@@ -47,6 +49,9 @@ export const StyledSituationPage = styled.form`
 
       .MuiButton-root {
         border-radius: 0;
+      }
+      .MuiButton-outlined {
+        background-color: black;
       }
     }
   }

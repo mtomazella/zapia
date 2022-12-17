@@ -9,7 +9,7 @@ export const useSituationInterpreter = ({
 }: {
   situation: TSituation
 }): { expression: string; displayExpression: string; error: string | null } => {
-  const { expression, variables = {}, controls = [] } = situation
+  const { expression, variables = [], controls = [] } = situation
 
   const [error, setError] = useState<string | null>(null)
   const [displayExpression, setDisplayExpression] = useState('')
@@ -19,12 +19,12 @@ export const useSituationInterpreter = ({
   const getVariablesToReplace = (expr: string) =>
     Array.from(expr.matchAll(/\[(.*?)\]/g)).map(e => e[1])
 
-  const getVariableValue = (key: string) => {
-    const foundKey = Object.keys(variables).find(
-      k => k.toLowerCase() === key.toLowerCase(),
+  const getVariableValue = (targetKey: string) => {
+    const foundKey = variables.find(
+      ({ key }) => key.toLowerCase() === targetKey.toLowerCase(),
     )
     if (!foundKey) return null
-    return variables[foundKey]
+    return foundKey.value
   }
 
   const preparedExpression = useMemo(() => {
@@ -49,7 +49,7 @@ export const useSituationInterpreter = ({
     for (const key of neededVariables) {
       const value = getVariableValue(key)
 
-      if (!value && value !== '') {
+      if (!value) {
         setError(`Variável não encontrada (${key})`)
         return expression
       }

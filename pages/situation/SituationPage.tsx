@@ -82,7 +82,22 @@ export const SituationPage: React.FC = () => {
           {...register('expression')}
         />
 
-        <h3>Controles</h3>
+        <div className="section-title">
+          <h3>Controles</h3>
+          <IconButton
+            onClick={() =>
+              appendControl({
+                name: '',
+                actionType: 'add',
+                active: false,
+                controlType: 'boolean',
+                value: '',
+              })
+            }
+          >
+            <FontAwesomeIcon icon={faAdd} />
+          </IconButton>
+        </div>
         {controlFields.map(({ id, actionType }, index) => {
           return (
             <div className="control-field" key={id}>
@@ -109,32 +124,33 @@ export const SituationPage: React.FC = () => {
             </div>
           )
         })}
-        <IconButton
-          onClick={() =>
-            appendControl({
-              name: '',
-              actionType: 'add',
-              active: false,
-              controlType: 'boolean',
-              value: '',
-            })
-          }
-        >
-          <FontAwesomeIcon icon={faAdd} />
-        </IconButton>
 
-        <h3>Variáveis</h3>
+        <div className="section-title">
+          <h3>Variáveis</h3>
+          <IconButton
+            onClick={() =>
+              appendVariable({
+                key: '',
+                value: '',
+              })
+            }
+          >
+            <FontAwesomeIcon icon={faAdd} />
+          </IconButton>
+        </div>
         {variableFields.map(({ id }, index) => {
           return (
             <div className="control-field" key={id}>
               <TextField
                 placeholder="Nome"
-                {...register(`variables.${index}.name`)}
+                {...register(`variables.${index}.key`)}
               />
               <label>:</label>
               <TextField
                 placeholder="Valor"
-                {...register(`variables.${index}.value`)}
+                {...register(`variables.${index}.value`, {
+                  valueAsNumber: true,
+                })}
               />
               <IconButton onClick={() => removeVariable(index)}>
                 <FontAwesomeIcon icon={faRemove} />
@@ -142,16 +158,6 @@ export const SituationPage: React.FC = () => {
             </div>
           )
         })}
-        <IconButton
-          onClick={() =>
-            appendVariable({
-              key: '',
-              value: '',
-            })
-          }
-        >
-          <FontAwesomeIcon icon={faAdd} />
-        </IconButton>
       </section>
 
       <section className="form-buttons">
