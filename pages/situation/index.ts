@@ -1,3 +1,3 @@
-import { SituationPage } from './SituationPage'
+import { SituationPage } from './components/SituationPage'
 
 export default SituationPage

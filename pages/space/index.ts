@@ -1,3 +1,3 @@
-import { Space } from './Space'
+import { Space } from './components/Space'
 
 export default Space
