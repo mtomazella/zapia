@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react'
 
 import { faDiceD20 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { AddCircle, Menu, More, MoreVert } from '@mui/icons-material'
+import { AddCircle, MoreVert } from '@mui/icons-material'
 import {
   Box,
   Card,
@@ -10,6 +10,9 @@ import {
   CardContent,
   Chip,
   IconButton,
+  Link,
+  Menu,
+  MenuItem,
 } from '@mui/material'
 import { useSituations, useUrlParameters } from 'hooks'
 import { useRouter } from 'next/router'
@@ -35,6 +38,8 @@ export const Space: React.FC = () => {
   const [diceExpression, setDiceExpression] = useState('')
   const [isDieRolling, setIsDieRolling] = useState(false)
   const [expressionText, setExpressionText] = useState('')
+  const [menuAnchor, setMenuAnchor] = React.useState<null | HTMLElement>(null)
+  const isMenuOpen = Boolean(menuAnchor)
 
   const addToExpression = (value: string) =>
     setExpressionText(
@@ -74,14 +79,27 @@ export const Space: React.FC = () => {
       }`,
     )
 
+  const openMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setMenuAnchor(event.currentTarget)
+  }
+  const closeMenu = () => {
+    setMenuAnchor(null)
+  }
+
   return (
     <StyledSpace>
       <Column>
         <div className="space-options">
-          <IconButton>
+          <IconButton onClick={openMenu}>
             <MoreVert />
           </IconButton>
         </div>
+        <Menu open={isMenuOpen} anchorEl={menuAnchor} onClose={closeMenu}>
+          <Link href="/help">
+            <MenuItem>Ajuda</MenuItem>
+          </Link>
+        </Menu>
+
         <div className="dice-box">
           <Die
             expression={diceExpression}

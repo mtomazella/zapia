@@ -20,7 +20,7 @@
   "plugins": ["react", "@typescript-eslint", "prettier", "simple-import-sort"],
   "rules": {
     "prettier/prettier": [
-      "warn",
+      "error",
       {
         "trailingComma": "all",
         "semi": false,
@@ -33,13 +33,13 @@
     "import/prefer-default-export": "off",
     "strict": 0,
     "max-len": [
-      "warn",
+      "error",
       {
         "code": 80
       }
     ],
     "simple-import-sort/imports": [
-      "warn",
+      "error",
       {
         "groups": [
           ["^react"],
@@ -52,6 +52,6 @@
         ]
       }
     ],
-    "simple-import-sort/exports": "warn"
+    "simple-import-sort/exports": "error"
   }
 }
