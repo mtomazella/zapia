@@ -43,7 +43,7 @@ export const useSituations = ({
   }
 
   // DEBUG  ----------------------
-  // useEffect(() => saveInLocalStorage(testInitialSituations))
+  useEffect(() => saveInLocalStorage(testInitialSituations))
   // -----------------------------
 
   const [situations, setSituations] = useState<TSituation[]>([])

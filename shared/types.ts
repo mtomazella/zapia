@@ -10,6 +10,7 @@ export type MaterialColor =
 export type TActionType = 'add' | 'substitute'
 export type TControlType = 'boolean'
 
+export type TSituationVariables = Record<string, string>
 export type TSituationControl = {
   name: string
   active: boolean
@@ -22,6 +23,6 @@ export type TSituation = {
   id: string
   name: string
   expression: string
-  variables?: Record<string, string>
+  variables?: TSituationVariables
   controls?: TSituationControl[]
 }

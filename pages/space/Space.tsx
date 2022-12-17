@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react'
 
 import { faDiceD20 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { AddCircle } from '@mui/icons-material'
+import { AddCircle, Menu, More, MoreVert } from '@mui/icons-material'
 import {
   Box,
   Card,
@@ -77,6 +77,11 @@ export const Space: React.FC = () => {
   return (
     <StyledSpace>
       <Column>
+        <div className="space-options">
+          <IconButton>
+            <MoreVert />
+          </IconButton>
+        </div>
         <div className="dice-box">
           <Die
             expression={diceExpression}

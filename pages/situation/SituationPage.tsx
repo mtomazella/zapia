@@ -1,19 +1,19 @@
 import React, { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { useFieldArray, useForm } from 'react-hook-form'
 
-import { Button, TextField } from '@mui/material'
+import { faAdd, faRemove } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Button, IconButton, MenuItem, Select, TextField } from '@mui/material'
 import { useSituations, useUrlParameters } from 'hooks'
 import { useRouter } from 'next/router'
-import { TSituation } from 'shared/types'
+import { ACTION_TYPE_DISPLAY_TEXT } from 'shared/constants'
+import { TActionType, TSituation } from 'shared/types'
 
 import { Die } from 'components'
 
 import { StyledSituationPage } from './SituationPage.styled'
 
-type Form = {
-  name: string
-  expression: string
-}
+type Form = TSituation
 
 export const SituationPage: React.FC = () => {
   const { back } = useRouter()
@@ -27,12 +27,30 @@ export const SituationPage: React.FC = () => {
     spaceName,
     situationId,
   })
-  const { register, reset, handleSubmit } = useForm<Form>()
+  const { control, register, reset, handleSubmit } = useForm<Form>()
+  const {
+    fields: controlFields,
+    append: appendControl,
+    remove: removeControl,
+  } = useFieldArray({
+    name: 'controls',
+    control,
+  })
+  const {
+    fields: variableFields,
+    append: appendVariable,
+    remove: removeVariable,
+  } = useFieldArray({
+    name: 'variables',
+    control,
+  })
 
   useEffect(() => {
     reset({
       name: situation?.name ?? '',
       expression: situation?.expression ?? initialExpression ?? '1d20',
+      controls: situation?.controls ?? [],
+      variables: situation?.variables ?? [],
     })
   }, [situation])
 
@@ -40,6 +58,14 @@ export const SituationPage: React.FC = () => {
     updateById({ ...(situation as TSituation), ...data })
     back()
   }
+
+  const actionTypeSelectOptions = Object.keys(ACTION_TYPE_DISPLAY_TEXT).map(
+    key => (
+      <MenuItem key={key} value={key}>
+        {ACTION_TYPE_DISPLAY_TEXT[key as TActionType]}
+      </MenuItem>
+    ),
+  )
 
   return (
     <StyledSituationPage onSubmit={handleSubmit(onSubmit)}>
@@ -55,6 +81,77 @@ export const SituationPage: React.FC = () => {
           InputLabelProps={{ shrink: true }}
           {...register('expression')}
         />
+
+        <h3>Controles</h3>
+        {controlFields.map(({ id, actionType }, index) => {
+          return (
+            <div className="control-field" key={id}>
+              <TextField
+                placeholder="Nome"
+                {...register(`controls.${index}.name`)}
+              />
+              <label>:</label>
+              <div>
+                <Select
+                  defaultValue={actionType}
+                  {...register(`controls.${index}.actionType`)}
+                >
+                  {actionTypeSelectOptions}
+                </Select>
+                <TextField
+                  placeholder="Expressão"
+                  {...register(`controls.${index}.value`)}
+                />
+              </div>
+              <IconButton onClick={() => removeControl(index)}>
+                <FontAwesomeIcon icon={faRemove} />
+              </IconButton>
+            </div>
+          )
+        })}
+        <IconButton
+          onClick={() =>
+            appendControl({
+              name: '',
+              actionType: 'add',
+              active: false,
+              controlType: 'boolean',
+              value: '',
+            })
+          }
+        >
+          <FontAwesomeIcon icon={faAdd} />
+        </IconButton>
+
+        <h3>Variáveis</h3>
+        {variableFields.map(({ id }, index) => {
+          return (
+            <div className="control-field" key={id}>
+              <TextField
+                placeholder="Nome"
+                {...register(`variables.${index}.name`)}
+              />
+              <label>:</label>
+              <TextField
+                placeholder="Valor"
+                {...register(`variables.${index}.value`)}
+              />
+              <IconButton onClick={() => removeVariable(index)}>
+                <FontAwesomeIcon icon={faRemove} />
+              </IconButton>
+            </div>
+          )
+        })}
+        <IconButton
+          onClick={() =>
+            appendVariable({
+              key: '',
+              value: '',
+            })
+          }
+        >
+          <FontAwesomeIcon icon={faAdd} />
+        </IconButton>
       </section>
 
       <section className="form-buttons">

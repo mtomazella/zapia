@@ -21,6 +21,12 @@ export const StyledSpace = styled.main`
     flex-direction: row-reverse;
   }
 
+  dic.space-options {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
   div.dice-box {
     display: flex;
     flex-direction: column;

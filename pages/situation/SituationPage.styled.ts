@@ -19,6 +19,23 @@ export const StyledSituationPage = styled.form`
         width: 100%;
         margin: 1rem 0;
       }
+
+      > div.control-field {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin: 1rem 0;
+        width: 100%;
+
+        .MuiTextField-root .MuiInputBase-root {
+          width: 100%;
+        }
+      }
+
+      > button.MuiIconButton-root {
+        float: right;
+      }
     }
 
     &.form-buttons {
