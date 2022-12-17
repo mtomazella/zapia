@@ -33,13 +33,13 @@
     "import/prefer-default-export": "off",
     "strict": 0,
     "max-len": [
-      "error",
+      "warn",
       {
         "code": 80
       }
     ],
     "simple-import-sort/imports": [
-      "error",
+      "warn",
       {
         "groups": [
           ["^react"],
@@ -52,6 +52,6 @@
         ]
       }
     ],
-    "simple-import-sort/exports": "error"
+    "simple-import-sort/exports": "warn"
   }
 }
