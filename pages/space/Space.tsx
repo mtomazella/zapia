@@ -14,7 +14,7 @@ import {
   Menu,
   MenuItem,
 } from '@mui/material'
-import { useSituations, useUrlParameters } from 'hooks'
+import { useDieRoll, useSituations, useUrlParameters } from 'hooks'
 import { useRouter } from 'next/router'
 import { TSituation } from 'shared/types'
 
@@ -35,12 +35,12 @@ export const Space: React.FC = () => {
     spaceName,
   })
 
-  const [diceExpression, setDiceExpression] = useState('')
-  const [isDieRolling, setIsDieRolling] = useState(false)
   const [expressionText, setExpressionText] = useState('')
   const [search, setSearch] = useState('')
   const [menuAnchor, setMenuAnchor] = React.useState<null | HTMLElement>(null)
   const isMenuOpen = Boolean(menuAnchor)
+
+  const { result: dieResult, isRolling: isDieRolling, roll } = useDieRoll()
 
   const addToExpression = (value: string) =>
     setExpressionText(
@@ -55,19 +55,18 @@ export const Space: React.FC = () => {
     [updateById],
   )
 
-  const roll = useCallback(
+  const rollHandler = useCallback(
     (expression?: string) => {
       if (!expression) expression = expressionText
-      setDiceExpression(expression)
-      setIsDieRolling(true)
+      roll(expression)
       scrollTo({ top: 0 })
     },
-    [expressionText, setDiceExpression, setIsDieRolling],
+    [expressionText],
   )
 
   const rollNoSituation = useCallback(
-    () => roll(expressionText),
-    [expressionText, roll],
+    () => rollHandler(expressionText),
+    [expressionText, rollHandler],
   )
 
   const situations = useMemo(
@@ -115,11 +114,7 @@ export const Space: React.FC = () => {
         </Menu>
 
         <div className="dice-box">
-          <Die
-            expression={diceExpression}
-            isRolling={isDieRolling}
-            setIsRolling={setIsDieRolling}
-          />
+          <Die isRolling={isDieRolling} result={dieResult} />
         </div>
         <Card className="expression-builder">
           <CardContent>
@@ -175,7 +170,7 @@ export const Space: React.FC = () => {
             key={situation.id}
             situation={situation}
             save={save}
-            roll={roll}
+            roll={rollHandler}
             edit={goToEditPage}
             deleteFn={deleteSituation}
           />
