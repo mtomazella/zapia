@@ -34,6 +34,10 @@ export const StyledSpace = styled.main`
     min-height: ${diceBoxHeight};
   }
 
+  div.search-bar {
+    padding: 1rem;
+  }
+
   div.MuiCard-root {
     margin: 1rem 0;
   }

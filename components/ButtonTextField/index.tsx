@@ -1,14 +1,15 @@
 import React, { ChangeEvent, KeyboardEventHandler, ReactNode } from 'react'
 
 import { IconButton, InputAdornment, TextField } from '@mui/material'
+import { noop } from 'lodash'
 
 export const ButtonTextField: React.FC<{
-  label: string
+  label?: string
   icon: ReactNode
-  actionFn: () => void
+  actionFn?: () => void
   onChange: (value: string) => void
   value?: string
-}> = ({ label, icon, actionFn, onChange, value }) => {
+}> = ({ label, icon, actionFn = noop, onChange, value }) => {
   const keyDownHandler: KeyboardEventHandler = event => {
     if (event.key === 'Enter') actionFn()
   }

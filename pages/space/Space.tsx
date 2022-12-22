@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 
-import { faDiceD20 } from '@fortawesome/free-solid-svg-icons'
+import { faDiceD20, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { AddCircle, MoreVert } from '@mui/icons-material'
 import {
@@ -28,7 +28,7 @@ export const Space: React.FC = () => {
   const { push } = useRouter()
   const { space: spaceName } = useUrlParameters()
   const {
-    situations,
+    situations: unfilteredSituations,
     updateOrInsert: updateById,
     deleteSituation,
   } = useSituations({
@@ -38,6 +38,7 @@ export const Space: React.FC = () => {
   const [diceExpression, setDiceExpression] = useState('')
   const [isDieRolling, setIsDieRolling] = useState(false)
   const [expressionText, setExpressionText] = useState('')
+  const [search, setSearch] = useState('')
   const [menuAnchor, setMenuAnchor] = React.useState<null | HTMLElement>(null)
   const isMenuOpen = Boolean(menuAnchor)
 
@@ -67,6 +68,19 @@ export const Space: React.FC = () => {
   const rollNoSituation = useCallback(
     () => roll(expressionText),
     [expressionText, roll],
+  )
+
+  const situations = useMemo(
+    () =>
+      unfilteredSituations.filter(
+        s =>
+          s.name.toLowerCase().includes(search.toLowerCase()) ||
+          s.expression
+            .toLowerCase()
+            .replaceAll(' ', '')
+            .includes(search.toLowerCase().replaceAll(' ', '')),
+      ),
+    [unfilteredSituations, search],
   )
 
   const goToEditPage = (id: string) =>
@@ -107,8 +121,6 @@ export const Space: React.FC = () => {
             setIsRolling={setIsDieRolling}
           />
         </div>
-      </Column>
-      <Column>
         <Card className="expression-builder">
           <CardContent>
             <ButtonTextField
@@ -150,7 +162,14 @@ export const Space: React.FC = () => {
             </div>
           </CardActions>
         </Card>
-
+      </Column>
+      <Column>
+        <Card className="search-bar">
+          <ButtonTextField
+            onChange={setSearch}
+            icon={<FontAwesomeIcon icon={faSearch} />}
+          />
+        </Card>
         {situations.map(situation => (
           <Situation
             key={situation.id}
