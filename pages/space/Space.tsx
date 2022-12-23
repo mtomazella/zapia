@@ -40,7 +40,12 @@ export const Space: React.FC = () => {
   const [menuAnchor, setMenuAnchor] = React.useState<null | HTMLElement>(null)
   const isMenuOpen = Boolean(menuAnchor)
 
-  const { result: dieResult, isRolling: isDieRolling, roll } = useDieRoll()
+  const {
+    result: dieResult,
+    completeTotal: completeDieResult,
+    isRolling: isDieRolling,
+    roll,
+  } = useDieRoll()
 
   const addToExpression = (value: string) =>
     setExpressionText(
@@ -116,6 +121,7 @@ export const Space: React.FC = () => {
         <div className="dice-box">
           <Die isRolling={isDieRolling} result={dieResult} />
         </div>
+        <span>{completeDieResult}</span>
         <Card className="expression-builder">
           <CardContent>
             <ButtonTextField

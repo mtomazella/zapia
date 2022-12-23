@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@dice-roller/rpg-dice-roller": "^5.2.1",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
     "@fortawesome/fontawesome-svg-core": "^6.1.2",
@@ -23,7 +24,6 @@
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "react-hook-form": "^7.34.2",
-    "roll": "^1.3.1",
     "styled-components": "^5.3.5",
     "uuid": "^8.3.2"
   },

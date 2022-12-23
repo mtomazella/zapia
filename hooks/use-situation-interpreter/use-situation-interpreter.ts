@@ -1,8 +1,7 @@
 import { useMemo, useState } from 'react'
 
-import RpgRoller from 'roll'
 import { TSituation } from 'shared/types'
-const { validate } = new RpgRoller()
+import { validate } from 'utils/dice'
 
 export const useSituationInterpreter = ({
   situation,

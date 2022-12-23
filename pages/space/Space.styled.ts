@@ -5,10 +5,11 @@ const diceBoxHeight = '15rem'
 
 export const Column = styled.section`
   width: 100%;
-  padding: 2rem 1rem;
+  padding: 0 1rem;
 
   @media ${mediaQueries.desktop} {
     width: 50%;
+    padding: 2rem 1rem;
   }
 `
 
@@ -32,10 +33,16 @@ export const StyledSpace = styled.main`
     flex-direction: column;
     justify-content: center;
     min-height: ${diceBoxHeight};
+    margin: 0 0 2rem 0;
+
+    span {
+      margin: 2rem 0 0 0;
+    }
   }
 
   div.search-bar {
     padding: 1rem;
+    margin: 0 !important;
   }
 
   div.MuiCard-root {

@@ -1,8 +1,9 @@
 import { useCallback, useState } from 'react'
 
-import RpgRoller from 'roll'
+import { DiceRoll, DiceRoller } from '@dice-roller/rpg-dice-roller'
+import { validate } from 'utils/dice'
 
-const rpgRoller = new RpgRoller()
+const rpgRoller = new DiceRoller()
 
 type UseDieRollParams = {
   duration?: number // ms
@@ -10,7 +11,9 @@ type UseDieRollParams = {
 
 export const useDieRoll = ({ duration = 1000 }: UseDieRollParams = {}) => {
   const [isRolling, setIsRolling] = useState(false)
-  const [result, setResult] = useState<number | undefined>(undefined)
+  const [result, setResult] = useState<DiceRoll | DiceRoll[] | undefined>(
+    undefined,
+  )
   const [error, setError] = useState<string>()
 
   const roll = useCallback(
@@ -19,7 +22,7 @@ export const useDieRoll = ({ duration = 1000 }: UseDieRollParams = {}) => {
       setIsRolling(true)
       expression = !expression ? '1d20' : expression
 
-      if (!rpgRoller.validate(expression)) {
+      if (!validate(expression)) {
         setTimeout(() => {
           setIsRolling(false)
           setError('Expressão inválida')
@@ -30,7 +33,7 @@ export const useDieRoll = ({ duration = 1000 }: UseDieRollParams = {}) => {
       console.log(expression)
 
       setTimeout(() => {
-        setResult(rpgRoller.roll(expression).result)
+        setResult(rpgRoller.roll(expression))
         setIsRolling(false)
       }, duration)
     },
@@ -40,7 +43,8 @@ export const useDieRoll = ({ duration = 1000 }: UseDieRollParams = {}) => {
   return {
     roll,
     isRolling,
-    result,
+    result: (result as DiceRoll)?.total,
+    completeTotal: (result as DiceRoll)?.toString(),
     error,
   }
 }
