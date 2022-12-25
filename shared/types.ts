@@ -29,3 +29,12 @@ export type TSituation = {
   variables?: TSituationVariable[]
   controls?: TSituationControl[]
 }
+
+export type TSpace = {
+  situations: TSituation[]
+}
+
+export type TSavedData = {
+  version: '0.1'
+  spaces: Record<string, TSpace>
+}

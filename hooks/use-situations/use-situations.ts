@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 
+import { useSpace } from 'hooks/use-space'
 import { isEmpty } from 'lodash'
 import { TSituation } from 'shared/types'
 import { v4 } from 'uuid'
-
-import { testInitialSituations } from './testSituations'
 
 type TUseSituationsProps = {
   spaceName?: string
@@ -17,49 +16,16 @@ type TUseSituationsResponse = {
   deleteSituation: (id: string) => void
 }
 
-const LOCAL_STORAGE_SITUATIONS_KEY = 'situations'
-
-const initialSituations: TSituation[] = []
-
 export const useSituations = ({
   spaceName,
   situationId,
 }: TUseSituationsProps): TUseSituationsResponse => {
-  const saveInLocalStorage = (sits: TSituation[]) =>
-    localStorage.setItem(
-      `${spaceName ?? ''}${LOCAL_STORAGE_SITUATIONS_KEY}`,
-      JSON.stringify(sits),
-    )
+  const { space, updateOrInsert: updateSpace } = useSpace({ spaceName })
+  const { situations } = space ?? { situations: [] }
 
-  const getLocalStorageValue = () => {
-    const value = localStorage.getItem(
-      `${spaceName ?? ''}${LOCAL_STORAGE_SITUATIONS_KEY}`,
-    )
-    if (!value) {
-      saveInLocalStorage(initialSituations)
-      return initialSituations
-    }
-    return JSON.parse(value)
+  const setSituationsAndSave = (sits: TSituation[]) => {
+    updateSpace(spaceName, { ...space, situations: sits })
   }
-
-  // DEBUG  ----------------------
-  // useEffect(() => saveInLocalStorage(testInitialSituations))
-  // -----------------------------
-
-  const [situations, setSituations] = useState<TSituation[]>([])
-
-  const setSituationsAndSave = useCallback(
-    (sits: TSituation[]) => {
-      setSituations(sits)
-      saveInLocalStorage(sits)
-    },
-    [setSituations],
-  )
-
-  useEffect(() => {
-    if (window && typeof window !== undefined)
-      setSituations(getLocalStorageValue())
-  }, [spaceName])
 
   const orderControls = (sit: TSituation) => {
     if (!sit.controls) sit.controls = []
