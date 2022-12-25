@@ -15,6 +15,7 @@ type TUseSpaceProps = {
   spaceName?: string
 }
 type TUseSpaceResponse = {
+  spaces: Record<string, TSpace>
   space: TSpace | undefined
   updateOrInsert: (
     name: string | undefined,
@@ -25,7 +26,7 @@ type TUseSpaceResponse = {
 
 export const useSpace = ({
   spaceName = DEFAULT_SPACE,
-}: TUseSpaceProps): TUseSpaceResponse => {
+}: TUseSpaceProps = {}): TUseSpaceResponse => {
   const getSavedData = (): TSavedData | undefined => {
     const data = localStorage.getItem(LOCAL_STORAGE_KEY)
     return data ? (JSON.parse(data) as TSavedData | undefined) : undefined
@@ -47,12 +48,12 @@ export const useSpace = ({
         [name]: { ...(savedData?.spaces ?? {})[name], ...space },
       },
     })
-    setSpace(getSpace(spaceName))
+    setSpaces(getSpaces())
   }
 
-  const getSpace = (name: string) => getSavedData()?.spaces[name]
+  const getSpaces = () => getSavedData()?.spaces ?? {}
 
-  const [space, setSpace] = useState<TSpace | undefined>(undefined)
+  const [spaces, setSpaces] = useState<Record<string, TSpace>>({})
 
   useEffect(() => {
     if (!window || typeof window === undefined) return
@@ -63,7 +64,7 @@ export const useSpace = ({
     if (!(savedData?.spaces ?? {})[spaceName])
       updateOrInsert(DEFAULT_SPACE, (defaultData.spaces ?? {})[spaceName])
 
-    setSpace(getSpace(spaceName) as TSpace)
+    setSpaces(getSpaces())
   }, [spaceName])
 
   const deleteSpace = (name: string) => {
@@ -73,7 +74,8 @@ export const useSpace = ({
   }
 
   return {
-    space,
+    spaces,
+    space: spaces[spaceName],
     updateOrInsert,
     deleteSpace,
   }

@@ -10,13 +10,14 @@ import {
   CardContent,
   Chip,
   IconButton,
-  Link,
   Menu,
   MenuItem,
+  Select,
 } from '@mui/material'
-import { useDieRoll, useSituations, useUrlParameters } from 'hooks'
+import { useDieRoll, useSituations, useSpace, useUrlParameters } from 'hooks'
 import { useRouter } from 'next/router'
 import { TSituation } from 'shared/types'
+import { generateSearchParams } from 'utils/navigation'
 
 import { Die } from 'components'
 import { ButtonTextField } from 'components/ButtonTextField'
@@ -26,13 +27,15 @@ import { Column, StyledSpace } from './Space.styled'
 
 export const Space: React.FC = () => {
   const { push } = useRouter()
-  const { space: spaceName } = useUrlParameters()
+  const { space: selectedSpace } = useUrlParameters()
+  const { spaces } = useSpace({ spaceName: selectedSpace })
+  const spaceNames = Object.keys(spaces)
   const {
     situations: unfilteredSituations,
     updateOrInsert: updateById,
     deleteSituation,
   } = useSituations({
-    spaceName,
+    spaceName: selectedSpace,
   })
 
   const [expressionText, setExpressionText] = useState('')
@@ -88,13 +91,14 @@ export const Space: React.FC = () => {
   )
 
   const goToEditPage = (id: string) =>
-    push(`/situation?id=${id}${spaceName ? `&space=${spaceName}` : ''}`)
+    push(`/situation?id=${id}${selectedSpace ? `&space=${selectedSpace}` : ''}`)
 
   const addNewSituation = () =>
     push(
-      `/situation${
-        expressionText ? `?initialExpression=${expressionText}` : ''
-      }`,
+      `/situation?${generateSearchParams({
+        initialExpression: expressionText,
+        space: selectedSpace,
+      })}`,
     )
 
   const openMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -111,12 +115,22 @@ export const Space: React.FC = () => {
           <IconButton onClick={openMenu}>
             <MoreVert />
           </IconButton>
+          <Menu open={isMenuOpen} anchorEl={menuAnchor} onClose={closeMenu}>
+            <MenuItem onClick={() => push(`/help`)}>Ajuda</MenuItem>
+          </Menu>
+
+          <Select size="small" value={selectedSpace ?? 'Padrão'}>
+            {spaceNames.map(spaceName => (
+              <MenuItem
+                key={spaceName}
+                value={spaceName}
+                onClick={() => push(`/?space=${spaceName}`)}
+              >
+                {spaceName}
+              </MenuItem>
+            ))}
+          </Select>
         </div>
-        <Menu open={isMenuOpen} anchorEl={menuAnchor} onClose={closeMenu}>
-          <Link href="/help">
-            <MenuItem>Ajuda</MenuItem>
-          </Link>
-        </Menu>
 
         <div className="dice-box">
           <Die isRolling={isDieRolling} result={dieResult} />
