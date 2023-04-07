@@ -15,7 +15,15 @@ import {
   Select,
 } from '@mui/material'
 import { useDieRoll, useSituations, useSpace, useUrlParameters } from 'hooks'
+import NextLink from 'next/link'
 import { useRouter } from 'next/router'
+import {
+  DEFAULT_SPACE,
+  EDIT_SITUATION_PAGE_ROUTE,
+  EDIT_SPACES_PAGE_ROUTE,
+  HELP_PAGE_ROUTE,
+  SPACE_PAGE_ROUTE,
+} from 'shared/constants'
 import { TSituation } from 'shared/types'
 import { generateSearchParams } from 'utils/navigation'
 
@@ -23,7 +31,7 @@ import { Die } from 'components'
 import { ButtonTextField } from 'components/ButtonTextField'
 import { Situation } from 'components/Situation'
 
-import { Column, StyledSpace } from './Space.styled'
+import { Column, EditSpaceMenuItem, StyledSpace } from './Space.styled'
 
 export const Space: React.FC = () => {
   const { push } = useRouter()
@@ -91,11 +99,15 @@ export const Space: React.FC = () => {
   )
 
   const goToEditPage = (id: string) =>
-    push(`/situation?id=${id}${selectedSpace ? `&space=${selectedSpace}` : ''}`)
+    push(
+      `/${EDIT_SITUATION_PAGE_ROUTE}?id=${id}${
+        selectedSpace ? `&space=${selectedSpace}` : ''
+      }`,
+    )
 
   const addNewSituation = () =>
     push(
-      `/situation?${generateSearchParams({
+      `/${EDIT_SITUATION_PAGE_ROUTE}?${generateSearchParams({
         initialExpression: expressionText,
         space: selectedSpace,
       })}`,
@@ -116,19 +128,26 @@ export const Space: React.FC = () => {
             <MoreVert />
           </IconButton>
           <Menu open={isMenuOpen} anchorEl={menuAnchor} onClose={closeMenu}>
-            <MenuItem onClick={() => push(`/help`)}>Ajuda</MenuItem>
+            <MenuItem onClick={() => push(`/${HELP_PAGE_ROUTE}`)}>
+              Ajuda
+            </MenuItem>
           </Menu>
 
-          <Select size="small" value={selectedSpace ?? 'Padrão'}>
+          <Select size="small" value={selectedSpace ?? DEFAULT_SPACE}>
             {spaceNames.map(spaceName => (
               <MenuItem
                 key={spaceName}
                 value={spaceName}
-                onClick={() => push(`/?space=${spaceName}`)}
+                onClick={() => push(`/${SPACE_PAGE_ROUTE}?space=${spaceName}`)}
               >
                 {spaceName}
               </MenuItem>
             ))}
+            <NextLink href={`/${EDIT_SPACES_PAGE_ROUTE}`}>
+              <EditSpaceMenuItem key="_edit">
+                <span>Editar</span>
+              </EditSpaceMenuItem>
+            </NextLink>
           </Select>
         </div>
 
@@ -183,6 +202,7 @@ export const Space: React.FC = () => {
           <ButtonTextField
             onChange={setSearch}
             icon={<FontAwesomeIcon icon={faSearch} />}
+            size="small"
           />
         </Card>
         {situations.map(situation => (

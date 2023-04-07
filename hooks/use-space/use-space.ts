@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react'
 
 import { isEmpty } from 'lodash'
+import { DEFAULT_SPACE, LOCAL_STORAGE_KEY } from 'shared/constants'
 import { TSavedData, TSpace } from 'shared/types'
-
-const LOCAL_STORAGE_KEY = 'rpg-dice-data'
-const DEFAULT_SPACE = 'Padrão'
 
 const defaultData: TSavedData = {
   version: '0.1',

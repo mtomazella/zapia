@@ -1,7 +1,12 @@
+import { MenuItem } from '@mui/material'
 import { mediaQueries } from 'style/mediaQueries'
 import styled from 'styled-components'
 
 const diceBoxHeight = '15rem'
+
+export const EditSpaceMenuItem = styled(MenuItem)`
+  border-top: 1px black solid;
+`
 
 export const Column = styled.section`
   width: 100%;
@@ -22,10 +27,10 @@ export const StyledSpace = styled.main`
     flex-direction: row-reverse;
   }
 
-  dic.space-options {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
+  div.space-options {
+    .MuiMenuItem-root {
+      background-color: red;
+    }
   }
 
   div.dice-box {

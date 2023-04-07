@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconButton } from '@mui/material'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import { SPACE_PAGE_ROUTE } from 'shared/constants'
 
 import singleUseRoll from './assets/single.png'
 import situationImage from './assets/situation.png'
@@ -15,7 +16,7 @@ export const HelpPage: React.FC = () => {
 
   return (
     <StyledHelpPage>
-      <IconButton onClick={() => push('/')}>
+      <IconButton onClick={() => push(`/${SPACE_PAGE_ROUTE}`)}>
         <FontAwesomeIcon icon={faArrowLeft} />
       </IconButton>
       <h1>Ajuda</h1>
