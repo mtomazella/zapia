@@ -38,3 +38,9 @@ export type TSavedData = {
   version: '0.1'
   spaces: Record<string, TSpace>
 }
+
+export type TConnectionInfo = {
+  player?: string
+  destinationKey?: string
+  sendRolls?: boolean
+}

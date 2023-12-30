@@ -1,3 +1,4 @@
+require('dotenv').config()
 const { Client, GatewayIntentBits, REST, Routes } = require('discord.js')
 
 /** @type {import('next').NextConfig} */
@@ -7,11 +8,8 @@ const nextConfig = {
   eslint: { ignoreDuringBuilds: true },
 }
 
-const TOKEN =
-  'MTE5MDUxOTM0NjcwODA4Njk1NA.GB3QR8.YeooTO8Wt17PjuVcQIjuy9hrZOCACT1oVLXwsA'
-const CLIENT_ID = '1190519346708086954'
-const URL_TO_ADD =
-  'https://discord.com/api/oauth2/authorize?client_id=1190519346708086954&permissions=8&scope=bot%20applications.commands'
+const TOKEN = process.env.BOT_TOKEN
+const CLIENT_ID = process.env.BOT_CLIENT_ID
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] })
 
@@ -29,6 +27,11 @@ const commands = [
   {
     name: 'refresh',
     description: 'Refresh commands',
+    type: 1,
+  },
+  {
+    name: 'key',
+    description: 'Get the channel key to connect the website to it',
     type: 1,
   },
 ]
@@ -61,9 +64,8 @@ client.on('interactionCreate', async interaction => {
 
   if (interaction.commandName === 'debug') {
     await interaction.reply(
-      JSON.stringify(
-        interaction,
-        (_, value) => (typeof value === 'bigint' ? value.toString() : value) // return everything else unchanged
+      JSON.stringify(interaction, (_, value) =>
+        typeof value === 'bigint' ? value.toString() : value
       ),
       2
     )
@@ -72,6 +74,12 @@ client.on('interactionCreate', async interaction => {
   if (interaction.commandName === 'refresh') {
     await refresh()
     await interaction.reply('Refreshed!')
+  }
+
+  if (interaction.commandName === 'key') {
+    await interaction.reply(
+      `### ${interaction.guildId}/${interaction.channelId}`
+    )
   }
 })
 

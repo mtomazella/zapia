@@ -2,12 +2,14 @@ import React, { useCallback, useMemo, useState } from 'react'
 
 import { faDiceD20, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { AddCircle, MoreVert } from '@mui/icons-material'
+import { AddCircle, CheckBox, MoreVert, RssFeed } from '@mui/icons-material'
 import {
   Box,
+  Button,
   Card,
   CardActions,
   CardContent,
+  Checkbox,
   Chip,
   IconButton,
   Menu,
@@ -18,6 +20,7 @@ import { useDieRoll, useSituations, useSpace, useUrlParameters } from 'hooks'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import {
+  CONNECTION_CONFIG_ROUTE,
   DEFAULT_SPACE,
   EDIT_SITUATION_PAGE_ROUTE,
   EDIT_SPACES_PAGE_ROUTE,
@@ -33,6 +36,7 @@ import { Situation } from 'components/Situation'
 
 import { Column, EditSpaceMenuItem, StyledSpace } from './Space.styled'
 import { useBot } from 'hooks/use-bot'
+import { useConnectionInfo } from 'hooks/use-connection'
 
 export const Space: React.FC = () => {
   const { push } = useRouter()
@@ -46,6 +50,8 @@ export const Space: React.FC = () => {
   } = useSituations({
     spaceName: selectedSpace,
   })
+  const { connectionInfo, updateOrInsert: updateConnectionInfo } =
+    useConnectionInfo()
 
   const [expressionText, setExpressionText] = useState('')
   const [search, setSearch] = useState('')
@@ -60,7 +66,7 @@ export const Space: React.FC = () => {
   } = useDieRoll()
 
   const { sendRoll } = useBot({
-    destinationKey: '874794726883221555/996921550190166136',
+    destinationKey: connectionInfo.destinationKey ?? '',
   })
 
   const addToExpression = (value: string) =>
@@ -81,16 +87,20 @@ export const Space: React.FC = () => {
       if (!expression) expression = expressionText
       scrollTo({ top: 0 })
       const rollResult = await roll(expression)
-      sendRoll({
-        result: rollResult?.result?.total?.toString() ?? '',
-        detailedResult: rollResult?.result?.toString() ?? '',
-        space: selectedSpace,
-        player: 'Maya',
-        situation: meta?.situation?.name,
-        controls: meta?.situation?.controls?.filter(control => control.active),
-      })
+      console.log(connectionInfo)
+      if (connectionInfo.sendRolls)
+        sendRoll({
+          result: rollResult?.result?.total?.toString() ?? '',
+          detailedResult: rollResult?.result?.toString() ?? '',
+          space: selectedSpace,
+          player: connectionInfo.player,
+          situation: meta?.situation?.name,
+          controls: meta?.situation?.controls?.filter(
+            control => control.active
+          ),
+        })
     },
-    [expressionText]
+    [expressionText, sendRoll, connectionInfo, roll]
   )
 
   const rollNoSituation = useCallback(
@@ -118,6 +128,8 @@ export const Space: React.FC = () => {
       }`
     )
 
+  const goToConnectionPage = () => push(`/${CONNECTION_CONFIG_ROUTE}`)
+
   const addNewSituation = () =>
     push(
       `/${EDIT_SITUATION_PAGE_ROUTE}?${generateSearchParams({
@@ -125,6 +137,13 @@ export const Space: React.FC = () => {
         space: selectedSpace,
       })}`
     )
+
+  const onSendRollsChange = useCallback(
+    (_: unknown, checked: boolean) => {
+      updateConnectionInfo({ sendRolls: checked })
+    },
+    [updateConnectionInfo]
+  )
 
   const openMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
     setMenuAnchor(event.currentTarget)
@@ -162,6 +181,16 @@ export const Space: React.FC = () => {
               </EditSpaceMenuItem>
             </NextLink>
           </Select>
+
+          <Button variant="outlined" color="info" onClick={goToConnectionPage}>
+            <RssFeed />
+            Conexão
+          </Button>
+          <Checkbox
+            checked={connectionInfo.sendRolls ?? false}
+            color="info"
+            onChange={onSendRollsChange}
+          />
         </div>
 
         <div className="dice-box">

@@ -31,6 +31,21 @@ export const StyledSpace = styled.main`
     .MuiMenuItem-root {
       background-color: red;
     }
+
+    .MuiButton-outlined {
+      float: right;
+      height: 40px;
+      margin-left: 0.5rem;
+      padding-left: 0.75rem;
+
+      svg {
+        margin-right: 0.25rem;
+      }
+    }
+
+    .MuiCheckbox-root {
+      float: right;
+    }
   }
 
   div.dice-box {
