@@ -32,6 +32,7 @@ import { ButtonTextField } from 'components/ButtonTextField'
 import { Situation } from 'components/Situation'
 
 import { Column, EditSpaceMenuItem, StyledSpace } from './Space.styled'
+import { useBot } from 'hooks/use-bot'
 
 export const Space: React.FC = () => {
   const { push } = useRouter()
@@ -58,31 +59,43 @@ export const Space: React.FC = () => {
     roll,
   } = useDieRoll()
 
+  const { sendRoll } = useBot({
+    destinationKey: '874794726883221555/996921550190166136',
+  })
+
   const addToExpression = (value: string) =>
     setExpressionText(
       prev =>
         `${prev}${
           prev.endsWith('+') || prev.endsWith('-') || prev === '' ? '1' : ''
-        }${value}`,
+        }${value}`
     )
 
   const save = useCallback(
     (situation: TSituation) => updateById(situation),
-    [updateById],
+    [updateById]
   )
 
   const rollHandler = useCallback(
-    (expression?: string) => {
+    async (expression?: string, meta?: { situation?: TSituation | null }) => {
       if (!expression) expression = expressionText
-      roll(expression)
       scrollTo({ top: 0 })
+      const rollResult = await roll(expression)
+      sendRoll({
+        result: rollResult?.result?.total?.toString() ?? '',
+        detailedResult: rollResult?.result?.toString() ?? '',
+        space: selectedSpace,
+        player: 'Maya',
+        situation: meta?.situation?.name,
+        controls: meta?.situation?.controls?.filter(control => control.active),
+      })
     },
-    [expressionText],
+    [expressionText]
   )
 
   const rollNoSituation = useCallback(
-    () => rollHandler(expressionText),
-    [expressionText, rollHandler],
+    () => rollHandler(expressionText, { situation: null }),
+    [expressionText, rollHandler]
   )
 
   const situations = useMemo(
@@ -93,16 +106,16 @@ export const Space: React.FC = () => {
           s.expression
             .toLowerCase()
             .replaceAll(' ', '')
-            .includes(search.toLowerCase().replaceAll(' ', '')),
+            .includes(search.toLowerCase().replaceAll(' ', ''))
       ),
-    [unfilteredSituations, search],
+    [unfilteredSituations, search]
   )
 
   const goToEditPage = (id: string) =>
     push(
       `/${EDIT_SITUATION_PAGE_ROUTE}?id=${id}${
         selectedSpace ? `&space=${selectedSpace}` : ''
-      }`,
+      }`
     )
 
   const addNewSituation = () =>
@@ -110,7 +123,7 @@ export const Space: React.FC = () => {
       `/${EDIT_SITUATION_PAGE_ROUTE}?${generateSearchParams({
         initialExpression: expressionText,
         space: selectedSpace,
-      })}`,
+      })}`
     )
 
   const openMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -210,7 +223,7 @@ export const Space: React.FC = () => {
             key={situation.id}
             situation={situation}
             save={save}
-            roll={rollHandler}
+            roll={roll => rollHandler(roll, { situation })}
             edit={goToEditPage}
             deleteFn={deleteSituation}
           />

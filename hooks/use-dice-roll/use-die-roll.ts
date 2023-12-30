@@ -12,12 +12,12 @@ type UseDieRollParams = {
 export const useDieRoll = ({ duration = 1000 }: UseDieRollParams = {}) => {
   const [isRolling, setIsRolling] = useState(false)
   const [result, setResult] = useState<DiceRoll | DiceRoll[] | undefined>(
-    undefined,
+    undefined
   )
   const [error, setError] = useState<string>()
 
   const roll = useCallback(
-    (expression: string) => {
+    async (expression: string) => {
       setError(undefined)
       setIsRolling(true)
       expression = !expression ? '1d20' : expression
@@ -32,12 +32,18 @@ export const useDieRoll = ({ duration = 1000 }: UseDieRollParams = {}) => {
 
       console.log(expression)
 
-      setTimeout(() => {
-        setResult(rpgRoller.roll(expression))
-        setIsRolling(false)
-      }, duration)
+      const result = await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          const result = rpgRoller.roll(expression)
+          setResult(result)
+          setIsRolling(false)
+          resolve(result)
+        }, duration)
+      })
+
+      return { result: result as DiceRoll }
     },
-    [duration, setError, setIsRolling, setResult],
+    [duration, setError, setIsRolling, setResult]
   )
 
   return {
