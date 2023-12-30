@@ -16,8 +16,7 @@ type BotRoll = {
 export const useBot = ({ destinationKey }: UseBotParams) => {
   const sendRoll = useCallback(
     (roll: BotRoll) => {
-      console.log(roll)
-      fetch(`http://localhost:8080/api/sendRoll`, {
+      fetch(`/api/sendRoll`, {
         method: 'POST',
         body: JSON.stringify({ destinationKey, ...roll }),
       })

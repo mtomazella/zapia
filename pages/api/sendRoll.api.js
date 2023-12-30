@@ -1,8 +1,19 @@
-export default function handler(req, res) {
+import { Client, GatewayIntentBits } from 'discord.js'
+
+const TOKEN = process.env.BOT_TOKEN
+
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(404).json({ error: 'Method not supported' })
     return
   }
+
+  const client = new Client({ intents: [GatewayIntentBits.Guilds] })
+  client.login(TOKEN)
+
+  await new Promise(resolve => {
+    client.on('ready', resolve)
+  })
 
   const {
     destinationKey,
@@ -14,8 +25,6 @@ export default function handler(req, res) {
     controls = [],
   } = JSON.parse(req.body ?? '{}') ?? {}
 
-  console.log(req.body)
-
   if (!destinationKey || !result) {
     res.status(400).json({ error: 'Invalid payload' })
     return
@@ -23,7 +32,7 @@ export default function handler(req, res) {
 
   const [guildId, channelId] = destinationKey.split('/')
 
-  const channel = global.discord.channels.cache.find(
+  const channel = client.channels.cache.find(
     ({ id, guildId: gId }) => id === channelId && guildId === gId
   )
 
@@ -42,7 +51,6 @@ export default function handler(req, res) {
   if (detailedResult) message[2] = `> *${detailedResult}*`
   message[3] = `> ### ${result}`
 
-  console.log(message)
   channel.send(message.filter(e => e !== undefined).join('\n'))
 
   res.status(200).end()
