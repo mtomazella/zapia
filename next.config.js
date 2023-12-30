@@ -4,7 +4,7 @@ const { Client, GatewayIntentBits, REST, Routes } = require('discord.js')
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  pageExtensions: ['page.tsx', 'page.ts', 'page.js', 'js', 'ts'],
+  pageExtensions: ['page.tsx', 'page.ts', 'page.js', 'api.js', 'api.ts'],
   eslint: { ignoreDuringBuilds: true },
 }
 
