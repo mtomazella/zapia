@@ -19,6 +19,7 @@ import {
   Chip,
   IconButton,
   Switch,
+  Tooltip,
 } from '@mui/material'
 import { useSituationInterpreter } from 'hooks'
 import { isEmpty } from 'lodash'
@@ -46,7 +47,7 @@ export const Situation: React.FC<TSituationComponent> = ({
 }) => {
   const { id, name, controls, variables } = useMemo(
     () => situation,
-    [situation],
+    [situation]
   )
   const { expression, displayExpression, error } = useSituationInterpreter({
     situation,
@@ -54,7 +55,7 @@ export const Situation: React.FC<TSituationComponent> = ({
 
   const rollCurrentExpression = useCallback(
     () => !error && roll(expression),
-    [roll, expression],
+    [roll, expression]
   )
 
   const toggleControl = (name: string) => {
@@ -142,15 +143,21 @@ export const Situation: React.FC<TSituationComponent> = ({
         )}
       </CardContent>
       <CardActions>
-        <IconButton onClick={onDelete}>
-          <Delete htmlColor={AppPalette.ui.error.main} fontSize="small" />
-        </IconButton>
-        <IconButton>
-          <CopyAll color="secondary" fontSize="small" />
-        </IconButton>
-        <IconButton onClick={onEdit}>
-          <Edit htmlColor={AppPalette.brand.yellow.dark} fontSize="small" />
-        </IconButton>
+        <Tooltip title="Deletar">
+          <IconButton onClick={onDelete}>
+            <Delete htmlColor={AppPalette.ui.error.main} fontSize="small" />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Copiar definição">
+          <IconButton disabled>
+            <CopyAll color="secondary" fontSize="small" />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Editar">
+          <IconButton onClick={onEdit}>
+            <Edit htmlColor={AppPalette.brand.yellow.dark} fontSize="small" />
+          </IconButton>
+        </Tooltip>
       </CardActions>
     </StyledSituation>
   )

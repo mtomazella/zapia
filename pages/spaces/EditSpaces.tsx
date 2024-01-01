@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 
 import {
   faAdd,
@@ -27,13 +27,28 @@ import { StyledEditSpacesPage } from './EditSpaces.styled'
 
 export const EditSpacesPage: React.FC = () => {
   const { push } = useRouter()
-  const { spaces: spacesObject } = useSpace()
+  const { spaces: spacesObject, updateOrInsert, deleteSpace } = useSpace()
   const spaces = Object.keys(spacesObject).map(name => ({
     name,
     ...spacesObject[name],
   }))
 
   const [newSpaceName, setNewSpaceName] = useState('')
+
+  const onAdd = useCallback(() => {
+    const name = newSpaceName.trim()
+
+    if (
+      !name ||
+      Object.keys(spacesObject)
+        .map(e => e.toLowerCase().trim())
+        .includes(name.toLowerCase())
+    )
+      return
+
+    updateOrInsert(name, {})
+    setNewSpaceName('')
+  }, [updateOrInsert, newSpaceName, spaces])
 
   const spaceComponents = useMemo(
     () =>
@@ -49,6 +64,7 @@ export const EditSpacesPage: React.FC = () => {
               <BottomNavigationAction
                 label="Excluir"
                 icon={<FontAwesomeIcon size="2x" icon={faTrash} />}
+                onClick={() => deleteSpace(name)}
               />
               <BottomNavigationAction
                 label="Exportar"
@@ -64,7 +80,7 @@ export const EditSpacesPage: React.FC = () => {
           </AccordionDetails>
         </Accordion>
       )),
-    [spaces],
+    [spaces]
   )
 
   return (
@@ -82,6 +98,7 @@ export const EditSpacesPage: React.FC = () => {
         icon={<FontAwesomeIcon icon={faAdd} />}
         value={newSpaceName}
         onChange={setNewSpaceName}
+        onClick={onAdd}
       />
     </StyledEditSpacesPage>
   )

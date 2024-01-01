@@ -24,7 +24,15 @@ export const useBot = ({ destinationKey }: UseBotParams) => {
     [destinationKey]
   )
 
+  const sendGlobalLog = (roll: BotRoll) => {
+    sendRoll({
+      ...roll,
+      destinationKey: process.env.NEXT_PUBLIC_BOT_GLOBAL_LOG,
+    } as BotRoll)
+  }
+
   return {
     sendRoll,
+    sendGlobalLog,
   }
 }

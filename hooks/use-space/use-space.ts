@@ -6,7 +6,7 @@ import { TSavedData, TSpace } from 'shared/types'
 
 const defaultData: TSavedData = {
   version: '0.1',
-  spaces: { Padrão: { situations: [] } },
+  spaces: { [DEFAULT_SPACE]: { situations: [] } },
 }
 
 type TUseSpaceProps = {
@@ -17,7 +17,7 @@ type TUseSpaceResponse = {
   space: TSpace | undefined
   updateOrInsert: (
     name: string | undefined,
-    data: TSpace | Partial<TSpace>,
+    data: TSpace | Partial<TSpace>
   ) => void
   deleteSpace: (name: string) => void
 }
@@ -35,7 +35,7 @@ export const useSpace = ({
 
   const updateOrInsert = (
     name: string = DEFAULT_SPACE,
-    space: TSpace | Partial<TSpace>,
+    space: TSpace | Partial<TSpace>
   ) => {
     const savedData = getSavedData() as TSavedData
     saveInLocalStorage({
@@ -43,7 +43,11 @@ export const useSpace = ({
       ...savedData,
       spaces: {
         ...savedData?.spaces,
-        [name]: { ...(savedData?.spaces ?? {})[name], ...space },
+        [name]: {
+          ...defaultData.spaces[DEFAULT_SPACE],
+          ...(savedData?.spaces ?? {})[name],
+          ...space,
+        },
       },
     })
     setSpaces(getSpaces())
@@ -69,6 +73,7 @@ export const useSpace = ({
     const savedData = getSavedData() as TSavedData
     delete savedData?.spaces[name]
     saveInLocalStorage(savedData)
+    setSpaces(getSpaces())
   }
 
   return {

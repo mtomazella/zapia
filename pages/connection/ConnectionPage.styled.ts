@@ -12,14 +12,23 @@ export const StyledConnectionPage = styled.form`
       flex-direction: column;
       align-items: center;
       text-align: center;
-      margin-bottom: 1.5rem;
+      margin-top: 1.5rem;
+      border-top: 1px solid #ccc;
 
       p {
         margin: 0.5rem 0;
+
+        &:last-of-type {
+          margin-bottom: 1rem;
+        }
       }
 
       button {
         margin: 1rem 0;
+
+        svg {
+          margin-right: 0.5rem;
+        }
       }
     }
 

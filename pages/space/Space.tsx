@@ -65,7 +65,7 @@ export const Space: React.FC = () => {
     roll,
   } = useDieRoll()
 
-  const { sendRoll } = useBot({
+  const { sendRoll, sendGlobalLog } = useBot({
     destinationKey: connectionInfo.destinationKey ?? '',
   })
 
@@ -86,19 +86,19 @@ export const Space: React.FC = () => {
     async (expression?: string, meta?: { situation?: TSituation | null }) => {
       if (!expression) expression = expressionText
       scrollTo({ top: 0 })
+
       const rollResult = await roll(expression)
-      console.log(connectionInfo)
-      if (connectionInfo.sendRolls)
-        sendRoll({
-          result: rollResult?.result?.total?.toString() ?? '',
-          detailedResult: rollResult?.result?.toString() ?? '',
-          space: selectedSpace,
-          player: connectionInfo.player,
-          situation: meta?.situation?.name,
-          controls: meta?.situation?.controls?.filter(
-            control => control.active
-          ),
-        })
+      const rollToSend = {
+        result: rollResult?.result?.total?.toString() ?? '',
+        detailedResult: rollResult?.result?.toString() ?? '',
+        space: selectedSpace,
+        player: connectionInfo.player,
+        situation: meta?.situation?.name,
+        controls: meta?.situation?.controls?.filter(control => control.active),
+      }
+
+      if (connectionInfo.sendRolls) sendRoll(rollToSend)
+      sendGlobalLog(rollToSend)
     },
     [expressionText, sendRoll, connectionInfo, roll]
   )
@@ -130,6 +130,8 @@ export const Space: React.FC = () => {
 
   const goToConnectionPage = () => push(`/${CONNECTION_CONFIG_ROUTE}`)
 
+  const goToHelpPage = () => push(`/${HELP_PAGE_ROUTE}`)
+
   const addNewSituation = () =>
     push(
       `/${EDIT_SITUATION_PAGE_ROUTE}?${generateSearchParams({
@@ -160,9 +162,7 @@ export const Space: React.FC = () => {
             <MoreVert />
           </IconButton>
           <Menu open={isMenuOpen} anchorEl={menuAnchor} onClose={closeMenu}>
-            <MenuItem onClick={() => push(`/${HELP_PAGE_ROUTE}`)}>
-              Ajuda
-            </MenuItem>
+            <MenuItem onClick={goToHelpPage}>Ajuda</MenuItem>
           </Menu>
 
           <Select size="small" value={selectedSpace ?? DEFAULT_SPACE}>
@@ -175,7 +175,7 @@ export const Space: React.FC = () => {
                 {spaceName}
               </MenuItem>
             ))}
-            <NextLink href={`/${EDIT_SPACES_PAGE_ROUTE}`}>
+            <NextLink legacyBehavior href={`/${EDIT_SPACES_PAGE_ROUTE}`}>
               <EditSpaceMenuItem key="_edit">
                 <span>Editar</span>
               </EditSpaceMenuItem>
@@ -229,6 +229,9 @@ export const Space: React.FC = () => {
               </IconButton>
               <IconButton onClick={() => addToExpression('d20')}>
                 <Chip color="success" label="D20" />
+              </IconButton>
+              <IconButton onClick={goToHelpPage}>
+                <Chip color="info" label="Ajuda" variant="outlined" />
               </IconButton>
             </Box>
             <div>

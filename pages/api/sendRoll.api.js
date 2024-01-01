@@ -30,10 +30,14 @@ export default async function handler(req, res) {
     return
   }
 
-  const [guildId, channelId] = destinationKey.split('/')
+  let [guildId, channelId] = destinationKey.split('/')
+  if (channelId === undefined) {
+    channelId = guildId
+    guildId = undefined
+  }
 
   const channel = client.channels.cache.find(
-    ({ id, guildId: gId }) => id === channelId && guildId === gId
+    ({ id, guildId: gId }) => id === channelId && (!guildId || guildId === gId)
   )
 
   const message = [undefined, []]

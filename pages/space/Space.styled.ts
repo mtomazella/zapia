@@ -54,6 +54,7 @@ export const StyledSpace = styled.main`
     justify-content: center;
     min-height: ${diceBoxHeight};
     margin: 0 0 2rem 0;
+    width: 100%;
 
     span {
       margin: 2rem 0 0 0;

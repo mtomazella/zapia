@@ -11,6 +11,9 @@ import { StyledConnectionPage } from './ConnectionPage.styled'
 import { SmartToy } from '@mui/icons-material'
 import { BOT_URL } from 'shared/constants'
 import { useConnectionInfo } from 'hooks/use-connection'
+import Image from 'next/image'
+
+import channelImage from './assets/channel.png'
 
 type Form = TConnectionInfo
 
@@ -38,24 +41,6 @@ export const ConnectionPage: React.FC = () => {
       <section>
         <Die isRolling rollForever animationDuration={10000} />
 
-        <div className="info">
-          <p>
-            Para enviar seus resultados para um canal do Discord, use o botão
-            abaixo para adicionar o bot.
-          </p>
-          <Button variant="outlined" color="info" onClick={getBot}>
-            <SmartToy /> Adicionar Bot
-          </Button>
-          <p>
-            Após adicioná-lo, vá ao canal desejado e utilize o comando /key para
-            conseguir a chave, então preencha o campo abaixo e salve as
-            configurações.
-          </p>
-          <p>
-            Seus resultados serão automaticamente enviados para aquele canal.
-          </p>
-        </div>
-
         <TextField
           label="Chave do Canal"
           InputLabelProps={{ shrink: true }}
@@ -66,6 +51,24 @@ export const ConnectionPage: React.FC = () => {
           InputLabelProps={{ shrink: true }}
           {...register('player')}
         />
+
+        <div className="info">
+          <h2>Conectando ao Discord</h2>
+          <p>
+            Para enviar seus resultados para um canal do Discord, use o botão
+            abaixo para adicionar o bot.
+          </p>
+          <Button variant="outlined" color="info" onClick={getBot}>
+            <SmartToy /> Adicionar Bot
+          </Button>
+          <p>
+            Após adicioná-lo, clique com o botão direito no canal que deseja
+            enviar os resultados e copie o ID. Então, preencha o campo "Chave do
+            Canal" e salve as configurações. Seus resultados serão
+            automaticamente enviados para aquele canal.
+          </p>
+          <Image src={channelImage} />
+        </div>
       </section>
 
       <section className="form-buttons">

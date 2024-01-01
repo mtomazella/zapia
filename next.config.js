@@ -24,16 +24,6 @@ const commands = [
     description: "Just don't",
     type: 1,
   },
-  {
-    name: 'refresh',
-    description: 'Refresh commands',
-    type: 1,
-  },
-  {
-    name: 'key',
-    description: 'Get the channel key to connect the website to it',
-    type: 1,
-  },
 ]
 
 const rest = new REST({ version: '10' }).setToken(TOKEN)
@@ -68,17 +58,6 @@ client.on('interactionCreate', async interaction => {
         typeof value === 'bigint' ? value.toString() : value
       ),
       2
-    )
-  }
-
-  if (interaction.commandName === 'refresh') {
-    await refresh()
-    await interaction.reply('Refreshed!')
-  }
-
-  if (interaction.commandName === 'key') {
-    await interaction.reply(
-      `### ${interaction.guildId}/${interaction.channelId}`
     )
   }
 })
