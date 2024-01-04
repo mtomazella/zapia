@@ -16,7 +16,7 @@ type BotRoll = {
 export const useBot = ({ destinationKey }: UseBotParams) => {
   const sendRoll = useCallback(
     (roll: BotRoll) => {
-      fetch(`/api/sendRoll`, {
+      fetch(process.env.NEXT_PUBLIC_SEND_ROLL_API_URL as string, {
         method: 'POST',
         body: JSON.stringify({ destinationKey, ...roll }),
       })
@@ -24,15 +24,7 @@ export const useBot = ({ destinationKey }: UseBotParams) => {
     [destinationKey]
   )
 
-  const sendGlobalLog = (roll: BotRoll) => {
-    sendRoll({
-      ...roll,
-      destinationKey: process.env.NEXT_PUBLIC_BOT_GLOBAL_LOG,
-    } as BotRoll)
-  }
-
   return {
     sendRoll,
-    sendGlobalLog,
   }
 }

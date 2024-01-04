@@ -65,7 +65,7 @@ export const Space: React.FC = () => {
     roll,
   } = useDieRoll()
 
-  const { sendRoll, sendGlobalLog } = useBot({
+  const { sendRoll } = useBot({
     destinationKey: connectionInfo.destinationKey ?? '',
   })
 
@@ -98,7 +98,6 @@ export const Space: React.FC = () => {
       }
 
       if (connectionInfo.sendRolls) sendRoll(rollToSend)
-      sendGlobalLog(rollToSend)
     },
     [expressionText, sendRoll, connectionInfo, roll]
   )
