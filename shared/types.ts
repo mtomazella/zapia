@@ -7,7 +7,7 @@ export type MaterialColor =
   | 'success'
   | 'warning'
 
-export type TActionType = 'add' | 'substitute'
+export type TActionType = 'add' | 'substitute' | 'variable'
 export type TControlType = 'boolean'
 
 export type TSituationVariable = {

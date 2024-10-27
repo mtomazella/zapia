@@ -31,9 +31,13 @@ export const useSituations = ({
     if (!sit.controls) sit.controls = []
     sit.controls.sort((c1, c2) => {
       if (c1.actionType === c2.actionType) return c1.name.localeCompare(c2.name)
-      if (c1.actionType === 'substitute') return -1
-      if (c2.actionType === 'substitute') return 1
-      return 0
+
+      const actionTypeOrder = ['substitute', 'add', 'variable']
+
+      return (
+        actionTypeOrder.indexOf(c1.actionType) -
+        actionTypeOrder.indexOf(c2.actionType)
+      )
     })
   }
 
@@ -67,13 +71,13 @@ export const useSituations = ({
 
       setSituationsAndSave(newSituations)
     },
-    [situations, setSituationsAndSave],
+    [situations, setSituationsAndSave]
   )
 
   const deleteSituation = useCallback(
     (id: string) =>
       setSituationsAndSave([...situations].filter(s => s.id !== id)),
-    [situations],
+    [situations]
   )
 
   return {
