@@ -5,11 +5,22 @@ import { TSituation } from 'shared/types'
 import { validate } from 'utils/dice'
 import { Parser } from 'expr-eval'
 
+export type TComputedVariable = {
+  key: string
+  value: string
+  computedValue: string
+}
+
 export const useSituationInterpreter = ({
   situation,
 }: {
   situation: TSituation
-}): { expression: string; displayExpression: string; error: string | null } => {
+}): {
+  expression: string
+  displayExpression: string
+  error: string | null
+  computedVariables: Record<string, TComputedVariable>
+} => {
   const { expression, variables = [], controls = [] } = situation
 
   const [error, setError] = useState<string | null>(null)
@@ -17,10 +28,18 @@ export const useSituationInterpreter = ({
 
   const cleanExpression = (expr: string) => expr.replaceAll(' ', '')
 
-  const getVariablesToReplace = (expr: string) =>
-    Array.from(expr.matchAll(/\[(.*?)\]/g)).map(e => e[1])
+  const getVariablesToReplace = (expr: string) => {
+    try {
+      if (!expr) return []
+      expr = expr.toString()
+      return Array.from(expr.matchAll(/\[(.*?)\]/g)).map(e => e[1])
+    } catch (e) {
+      console.error(e, expr)
+      return []
+    }
+  }
 
-  const getVariableValue = useCallback(
+  const computeVariableValue = useCallback(
     (targetKey: string) => {
       const foundKey = variables.find(
         ({ key }) => key.toLowerCase() === targetKey.toLowerCase()
@@ -42,7 +61,7 @@ export const useSituationInterpreter = ({
 
           const valueBeforeChange = clone(variableValue)
 
-          const changeWithVariablesApplied = applyVariables(change)
+          const changeWithVariablesApplied = applyVariablesToExpression(change)
 
           try {
             if (changeWithVariablesApplied.charAt(0) === '=')
@@ -71,13 +90,13 @@ export const useSituationInterpreter = ({
     [variables, controls]
   )
 
-  const applyVariables = useCallback(
+  const applyVariablesToExpression = useCallback(
     (expr: string) => {
       const neededVariables = getVariablesToReplace(expr)
       let builtExpression = expr
 
       for (const key of neededVariables) {
-        const value = getVariableValue(key)
+        const value = computeVariableValue(key)
 
         if (!value) {
           setError(`Variável não encontrada (${key})`)
@@ -91,6 +110,22 @@ export const useSituationInterpreter = ({
     },
     [variables, controls]
   )
+
+  const computedVariables = useMemo(() => {
+    const result = variables
+      .map(({ key, value }) => {
+        debugger
+        const computedValue = applyVariablesToExpression(`[${key}]`)
+        return { key, value, computedValue }
+      })
+      .reduce((acc: Record<string, TComputedVariable>, variable) => {
+        acc[variable.key] = variable
+        return acc
+      }, {})
+
+    debugger
+    return result
+  }, [variables, controls])
 
   const preparedExpression = useMemo(() => {
     setError(null)
@@ -109,7 +144,7 @@ export const useSituationInterpreter = ({
     })
     setDisplayExpression(controlledExpression)
 
-    let builtExpression = applyVariables(controlledExpression)
+    let builtExpression = applyVariablesToExpression(controlledExpression)
 
     if (!validate(builtExpression)) {
       setError('Expressão inválida')
@@ -123,5 +158,6 @@ export const useSituationInterpreter = ({
     expression: preparedExpression,
     displayExpression,
     error,
+    computedVariables,
   }
 }

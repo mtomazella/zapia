@@ -43,6 +43,22 @@ export const Variable = styled.div`
   }
 `
 
+export const VariableTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    text-align: left;
+    padding: 0.5rem;
+    border-bottom: 1px solid ${AppPalette.gray[10]};
+  }
+
+  td {
+    padding: 0.5rem;
+    border-bottom: 1px solid ${AppPalette.gray[10]};
+  }
+`
+
 export const StyledSituation = styled(Card)`
   h3 {
     margin: 0;

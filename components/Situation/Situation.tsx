@@ -28,7 +28,13 @@ import { TSituation } from 'shared/types'
 import { AppPalette } from 'style/palette'
 import { v4 } from 'uuid'
 
-import { Control, Row, StyledSituation, Variable } from './Situation.styled'
+import {
+  Control,
+  Row,
+  StyledSituation,
+  Variable,
+  VariableTable,
+} from './Situation.styled'
 
 type TSituationComponent = {
   situation: TSituation
@@ -49,9 +55,10 @@ export const Situation: React.FC<TSituationComponent> = ({
     () => situation,
     [situation]
   )
-  const { expression, displayExpression, error } = useSituationInterpreter({
-    situation,
-  })
+  const { expression, displayExpression, error, computedVariables } =
+    useSituationInterpreter({
+      situation,
+    })
 
   const rollCurrentExpression = useCallback(
     () => !error && roll(expression),
@@ -133,11 +140,26 @@ export const Situation: React.FC<TSituationComponent> = ({
               <label>Variáveis</label>
             </AccordionSummary>
             <AccordionDetails>
-              {variables.map(({ key, value }) => (
-                <Variable key={key}>
-                  <b>{key}</b> <p>{value}</p>
-                </Variable>
-              ))}
+              <VariableTable>
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Valor Incial</th>
+                    <th>Valor Atual</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.values(computedVariables).map(
+                    ({ key, value, computedValue }) => (
+                      <tr key={key}>
+                        <td>{key}</td>
+                        <td>{value}</td>
+                        <td>{computedValue}</td>
+                      </tr>
+                    )
+                  )}
+                </tbody>
+              </VariableTable>
             </AccordionDetails>
           </Accordion>
         )}
