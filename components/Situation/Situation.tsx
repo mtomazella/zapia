@@ -32,7 +32,6 @@ import {
   Control,
   Row,
   StyledSituation,
-  Variable,
   VariableTable,
 } from './Situation.styled'
 

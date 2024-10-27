@@ -1,9 +1,9 @@
 import { useCallback, useMemo, useState } from 'react'
-import { clone, isNaN } from 'lodash'
 
+import { Parser } from 'expr-eval'
+import { clone, isNaN } from 'lodash'
 import { TSituation } from 'shared/types'
 import { validate } from 'utils/dice'
-import { Parser } from 'expr-eval'
 
 export type TComputedVariable = {
   key: string
@@ -30,7 +30,6 @@ export const useSituationInterpreter = ({
 
   const getVariablesToReplace = (expr: string) => {
     try {
-      if (!expr) return []
       expr = expr.toString()
       return Array.from(expr.matchAll(/\[(.*?)\]/g)).map(e => e[1])
     } catch (e) {
@@ -85,7 +84,7 @@ export const useSituationInterpreter = ({
         })
       })
 
-      return variableValue
+      return variableValue.toString()
     },
     [variables, controls]
   )
@@ -114,7 +113,6 @@ export const useSituationInterpreter = ({
   const computedVariables = useMemo(() => {
     const result = variables
       .map(({ key, value }) => {
-        debugger
         const computedValue = applyVariablesToExpression(`[${key}]`)
         return { key, value, computedValue }
       })
@@ -123,7 +121,6 @@ export const useSituationInterpreter = ({
         return acc
       }, {})
 
-    debugger
     return result
   }, [variables, controls])
 
@@ -144,7 +141,7 @@ export const useSituationInterpreter = ({
     })
     setDisplayExpression(controlledExpression)
 
-    let builtExpression = applyVariablesToExpression(controlledExpression)
+    const builtExpression = applyVariablesToExpression(controlledExpression)
 
     if (!validate(builtExpression)) {
       setError('Expressão inválida')
