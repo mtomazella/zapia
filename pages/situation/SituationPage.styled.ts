@@ -54,5 +54,18 @@ export const StyledSituationPage = styled.form`
         background-color: black;
       }
     }
+
+    > div.paste-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 1rem 0;
+      width: 100%;
+
+      .MuiButton-root {
+        margin: 0.225rem 0;
+        width: 80%;
+      }
+    }
   }
 `
