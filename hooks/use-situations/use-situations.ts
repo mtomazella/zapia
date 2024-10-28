@@ -14,6 +14,8 @@ type TUseSituationsResponse = {
   situation?: TSituation
   updateOrInsert: (situation: TSituation | Partial<TSituation>) => void
   deleteSituation: (id: string) => void
+  duplicateSituation: (id: string) => void
+  getSituationJson: (id: string) => string
 }
 
 export const useSituations = ({
@@ -80,10 +82,45 @@ export const useSituations = ({
     [situations]
   )
 
+  const duplicateSituation = useCallback(
+    (id: string) => {
+      const sit = getSituation(id)
+      if (!sit) return
+
+      let copyNumber = 1
+      situations.forEach(s => {
+        if (s.name.includes(sit.name)) {
+          const part1 = s.name.split('(')[1]
+          if (!part1) return copyNumber
+          const numberString = part1.split(')')[0]
+          if (isNaN(Number(numberString))) return copyNumber
+          const number = Number(numberString)
+          if (number >= copyNumber) copyNumber = number + 1
+        }
+      })
+
+      const newSit = {
+        ...sit,
+        id: undefined,
+        name: `${sit.name} (${copyNumber})`,
+      }
+
+      updateOrInsert(newSit)
+    },
+    [getSituation, updateOrInsert]
+  )
+
+  const getSituationJson = useCallback(
+    (id: string) => JSON.stringify(getSituation(id), null, 2),
+    [getSituation]
+  )
+
   return {
     situations: sortSituations(situations),
     situation: situationId ? getSituation(situationId) : undefined,
     updateOrInsert,
     deleteSituation,
+    duplicateSituation,
+    getSituationJson,
   }
 }

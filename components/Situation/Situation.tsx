@@ -18,9 +18,12 @@ import {
   CardContent,
   Chip,
   IconButton,
+  Menu,
+  MenuItem,
   Switch,
   Tooltip,
 } from '@mui/material'
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state'
 import { useSituationInterpreter } from 'hooks'
 import { isEmpty } from 'lodash'
 import { ACTION_TYPE_COLORS, ACTION_TYPE_DISPLAY_TEXT } from 'shared/constants'
@@ -41,6 +44,8 @@ type TSituationComponent = {
   save: (situation: TSituation) => void
   edit: (id: string) => void
   deleteFn: (id: string) => void
+  duplicateFn: (id: string) => void
+  getSituationJson: (id: string) => string
 }
 
 export const Situation: React.FC<TSituationComponent> = ({
@@ -49,6 +54,8 @@ export const Situation: React.FC<TSituationComponent> = ({
   save,
   edit,
   deleteFn,
+  duplicateFn,
+  getSituationJson,
 }) => {
   const { id, name, controls, variables } = useMemo(
     () => situation,
@@ -73,6 +80,11 @@ export const Situation: React.FC<TSituationComponent> = ({
 
   const onEdit = () => edit(id)
   const onDelete = () => deleteFn(id)
+  const onDuplicate = () => duplicateFn(id)
+  const onCopyToClipboard = () => {
+    const jsonString = getSituationJson(id)
+    navigator.clipboard.writeText(jsonString)
+  }
 
   return (
     <StyledSituation>
@@ -98,7 +110,7 @@ export const Situation: React.FC<TSituationComponent> = ({
       </CardContent>
       <CardContent>
         {!!controls && controls.length > 0 && (
-          <Accordion>
+          <Accordion defaultExpanded>
             <AccordionSummary>
               <Settings
                 fontSize="small"
@@ -130,7 +142,7 @@ export const Situation: React.FC<TSituationComponent> = ({
           </Accordion>
         )}
         {!!variables && !isEmpty(variables) && (
-          <Accordion>
+          <Accordion defaultExpanded>
             <AccordionSummary>
               <DataArray
                 fontSize="small"
@@ -170,9 +182,33 @@ export const Situation: React.FC<TSituationComponent> = ({
           </IconButton>
         </Tooltip>
         <Tooltip title="Copiar definição">
-          <IconButton disabled>
-            <CopyAll color="secondary" fontSize="small" />
-          </IconButton>
+          <PopupState variant="popover" popupId="copy-menu">
+            {popupState => (
+              <React.Fragment>
+                <IconButton {...bindTrigger(popupState)}>
+                  <CopyAll color="secondary" fontSize="small" />
+                </IconButton>
+                <Menu {...bindMenu(popupState)}>
+                  <MenuItem
+                    onClick={() => {
+                      onDuplicate()
+                      popupState.close()
+                    }}
+                  >
+                    Duplicar
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      onCopyToClipboard()
+                      popupState.close()
+                    }}
+                  >
+                    Copiar para a área de transferência
+                  </MenuItem>
+                </Menu>
+              </React.Fragment>
+            )}
+          </PopupState>
         </Tooltip>
         <Tooltip title="Editar">
           <IconButton onClick={onEdit}>

@@ -47,6 +47,8 @@ export const Space: React.FC = () => {
     situations: unfilteredSituations,
     updateOrInsert: updateById,
     deleteSituation,
+    duplicateSituation,
+    getSituationJson,
   } = useSituations({
     spaceName: selectedSpace,
   })
@@ -257,6 +259,8 @@ export const Space: React.FC = () => {
             roll={roll => rollHandler(roll, { situation })}
             edit={goToEditPage}
             deleteFn={deleteSituation}
+            duplicateFn={duplicateSituation}
+            getSituationJson={getSituationJson}
           />
         ))}
       </Column>
