@@ -23,7 +23,7 @@ import { TActionType, TSituation } from 'shared/types'
 import { Die } from 'components'
 
 import { StyledSituationPage } from './SituationPage.styled'
-import { SituationValidationError, validateSituation } from 'utils/situation'
+import { SituationValidationError, validateSituation } from 'utils/clipboard'
 
 type Form = TSituation
 
