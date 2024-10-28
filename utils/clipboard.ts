@@ -43,7 +43,7 @@ export const validateSituation = (situation: TSituation) => {
       )
     }
 
-    if (!control.value) {
+    if (!control.value.toString()) {
       throw new SituationValidationError('Um controle não possui valor')
     }
   })
@@ -53,7 +53,7 @@ export const validateSituation = (situation: TSituation) => {
       throw new SituationValidationError('Uma variável não possui nome')
     }
 
-    if (!variable.value) {
+    if (!variable.value.toString()) {
       throw new SituationValidationError('Uma variável não possui valor')
     }
   })
