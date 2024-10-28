@@ -18,3 +18,17 @@ export const StyledEditSpacesPage = styled.main`
     margin: 1rem 0 0;
   }
 `
+export const ImportModal = styled.div`
+  > .load {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1rem;
+    width: 100%;
+
+    > .MuiButton-root {
+      margin: 0.5rem 0;
+      width: 100%;
+    }
+  }
+`

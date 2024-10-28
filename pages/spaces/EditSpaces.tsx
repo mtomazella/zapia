@@ -34,8 +34,10 @@ import { SPACE_PAGE_ROUTE } from 'shared/constants'
 
 import { ButtonTextField } from 'components/ButtonTextField'
 
-import { StyledEditSpacesPage } from './EditSpaces.styled'
+import { ImportModal, StyledEditSpacesPage } from './EditSpaces.styled'
 import { TSpace } from 'shared/types'
+import { SituationValidationError, validateSituation } from 'utils/clipboard'
+import { v4 } from 'uuid'
 
 export const EditSpacesPage: React.FC = () => {
   const [exportModal, setExportModal] = useState<{
@@ -48,6 +50,24 @@ export const EditSpacesPage: React.FC = () => {
     spaceName: '',
     space: null,
     situationsSelected: [],
+  })
+
+  const [importModal, setImportModal] = useState<{
+    open: boolean
+    spaceName: string
+    space: TSpace | null
+    importingContent: TSpace | null
+    contentLoaded: boolean
+    situationsSelected: string[]
+    error: string | null
+  }>({
+    open: false,
+    spaceName: '',
+    space: null,
+    importingContent: null,
+    contentLoaded: false,
+    situationsSelected: [],
+    error: null,
   })
 
   const { push } = useRouter()
@@ -111,6 +131,74 @@ export const EditSpacesPage: React.FC = () => {
     setExportModal({ ...exportModal, open: false })
   }, [spacesObject, exportModal])
 
+  const loadImportContent = useCallback(
+    (content: string) => {
+      try {
+        const json = JSON.parse(content)
+        const space = Object.values(json)[0] as TSpace
+
+        if (!space) throw new Error()
+        if (!space.situations || !Array.isArray(space.situations))
+          throw new Error('Situações não encontradas.')
+        space.situations.forEach((situation: any) => {
+          try {
+            validateSituation(situation)
+          } catch (e) {
+            throw new Error('Situações inválidas.' + (e as Error).message)
+          }
+        })
+
+        setImportModal({
+          ...importModal,
+          importingContent: space,
+          contentLoaded: true,
+          error: null,
+        })
+      } catch (e) {
+        setImportModal({
+          ...importModal,
+          contentLoaded: false,
+          error:
+            'Conteúdo inválido' + (e instanceof SituationValidationError)
+              ? (e as Error).message ?? ''
+              : '',
+        })
+      }
+    },
+    [importModal, setImportModal]
+  )
+
+  const onImport = useCallback(() => {
+    if (!importModal.importingContent) return
+
+    const space = spacesObject[importModal.spaceName]
+    const importingSituations = importModal.importingContent.situations
+
+    updateOrInsert(importModal.spaceName, {
+      ...space,
+      situations: [
+        ...space.situations,
+        ...importingSituations.map(sit => {
+          if (space.situations.some(s => s.name === sit.name)) {
+            sit.name = sit.name + ' (importado)'
+          }
+          return {
+            ...sit,
+            id: v4(),
+          }
+        }),
+      ],
+    })
+
+    setImportModal({
+      ...importModal,
+      open: false,
+      importingContent: null,
+      contentLoaded: false,
+      error: null,
+    })
+  }, [spacesObject, importModal])
+
   const spaceComponents = useMemo(
     () =>
       spaces.map(({ name }) => (
@@ -142,7 +230,17 @@ export const EditSpacesPage: React.FC = () => {
               <BottomNavigationAction
                 label="Importar"
                 icon={<FontAwesomeIcon size="2x" icon={faArrowDown} />}
-                disabled
+                onClick={() =>
+                  setImportModal({
+                    open: true,
+                    spaceName: name,
+                    space: spacesObject[name],
+                    importingContent: null,
+                    contentLoaded: false,
+                    situationsSelected: [],
+                    error: null,
+                  })
+                }
               />
             </BottomNavigation>
           </AccordionDetails>
@@ -249,6 +347,126 @@ export const EditSpacesPage: React.FC = () => {
             Exportar para Área de Transferência
           </Button>
         </DialogActions>
+      </Dialog>
+
+      <Dialog open={importModal.open}>
+        <ImportModal>
+          <DialogTitle>Importar para {importModal.spaceName}</DialogTitle>
+
+          {!importModal.contentLoaded && (
+            <DialogContent className="load">
+              <Button variant="contained" component="label">
+                Selecionar Arquivo
+                <input
+                  type="file"
+                  hidden
+                  onChange={async e => {
+                    const file = e.target.files?.[0]
+                    if (!file) return
+
+                    const text = await file.text()
+                    loadImportContent(text)
+                  }}
+                />
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  navigator.clipboard.readText().then(loadImportContent)
+                }}
+              >
+                Colar da área de transferência
+              </Button>
+
+              {importModal.error && (
+                <p style={{ color: 'red' }}>{importModal.error}</p>
+              )}
+            </DialogContent>
+          )}
+
+          {importModal.contentLoaded && (
+            <DialogContent>
+              <p>Selecione as situações que deseja importar:</p>
+              <List>
+                <ListItem>
+                  <ListItemIcon>
+                    <Checkbox
+                      edge="start"
+                      checked={
+                        importModal.situationsSelected.length ===
+                        importModal.importingContent?.situations.length
+                      }
+                      tabIndex={-1}
+                      onClick={() => {
+                        if (
+                          importModal.situationsSelected.length ===
+                          importModal.importingContent?.situations.length
+                        )
+                          setImportModal({
+                            ...importModal,
+                            situationsSelected: [],
+                          })
+                        else {
+                          setImportModal({
+                            ...importModal,
+                            situationsSelected:
+                              importModal.importingContent?.situations.map(
+                                situation => situation.id
+                              ) ?? [],
+                          })
+                        }
+                      }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText primary="Selecionar Todas" />
+                </ListItem>
+
+                <Divider />
+
+                {(importModal?.importingContent?.situations ?? []).map(
+                  situation => (
+                    <ListItem key={situation.id}>
+                      <ListItemIcon>
+                        <Checkbox
+                          edge="start"
+                          checked={importModal.situationsSelected.includes(
+                            situation.id
+                          )}
+                          tabIndex={-1}
+                          onClick={() => {
+                            setImportModal({
+                              ...importModal,
+                              situationsSelected:
+                                importModal.situationsSelected.includes(
+                                  situation.id
+                                )
+                                  ? importModal.situationsSelected.filter(
+                                      e => e !== situation.id
+                                    )
+                                  : [
+                                      ...importModal.situationsSelected,
+                                      situation.id,
+                                    ],
+                            })
+                          }}
+                        />
+                      </ListItemIcon>
+                      <ListItemText primary={situation.name} />
+                    </ListItem>
+                  )
+                )}
+              </List>
+            </DialogContent>
+          )}
+          <DialogActions>
+            <Button
+              onClick={() => setImportModal({ ...importModal, open: false })}
+            >
+              Cancelar
+            </Button>
+            <Button onClick={onImport}>Importar</Button>
+          </DialogActions>
+        </ImportModal>
       </Dialog>
     </>
   )
