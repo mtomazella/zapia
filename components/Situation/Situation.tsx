@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 
 import { faDiceD20 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -14,9 +14,15 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Button,
   CardActions,
   CardContent,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   IconButton,
   Menu,
   MenuItem,
@@ -57,6 +63,8 @@ export const Situation: React.FC<TSituationComponent> = ({
   duplicateFn,
   getSituationJson,
 }) => {
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+
   const { id, name, controls, variables } = useMemo(
     () => situation,
     [situation]
@@ -177,7 +185,7 @@ export const Situation: React.FC<TSituationComponent> = ({
       </CardContent>
       <CardActions>
         <Tooltip title="Deletar">
-          <IconButton onClick={onDelete}>
+          <IconButton onClick={() => setDeleteModalOpen(true)}>
             <Delete htmlColor={AppPalette.ui.error.main} fontSize="small" />
           </IconButton>
         </Tooltip>
@@ -216,6 +224,21 @@ export const Situation: React.FC<TSituationComponent> = ({
           </IconButton>
         </Tooltip>
       </CardActions>
+
+      <Dialog
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+      >
+        <DialogTitle id="alert-dialog-title">Tem certeza que deseja deletar essa Situação?</DialogTitle>
+        <DialogActions>
+          <Button onClick={() => setDeleteModalOpen(false)} autoFocus>
+            Não deletar
+          </Button>
+          <Button onClick={onDelete}>
+            Deletar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </StyledSituation>
   )
 }
