@@ -21,6 +21,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
   IconButton,
   List,
   ListItem,
@@ -175,6 +176,41 @@ export const EditSpacesPage: React.FC = () => {
         <DialogContent>
           <p>Selecione as situações que deseja exportar:</p>
           <List>
+            <ListItem>
+              <ListItemIcon>
+                <Checkbox
+                  edge="start"
+                  checked={
+                    exportModal.situationsSelected.length ===
+                    exportModal.space?.situations.length
+                  }
+                  tabIndex={-1}
+                  onClick={() => {
+                    if (
+                      exportModal.situationsSelected.length ===
+                      exportModal.space?.situations.length
+                    )
+                      setExportModal({
+                        ...exportModal,
+                        situationsSelected: [],
+                      })
+                    else {
+                      setExportModal({
+                        ...exportModal,
+                        situationsSelected:
+                          exportModal.space?.situations.map(
+                            situation => situation.id
+                          ) ?? [],
+                      })
+                    }
+                  }}
+                />
+              </ListItemIcon>
+              <ListItemText primary="Selecionar Todas" />
+            </ListItem>
+
+            <Divider />
+
             {(exportModal?.space?.situations ?? []).map(situation => (
               <ListItem key={situation.id}>
                 <ListItemIcon>
@@ -184,7 +220,6 @@ export const EditSpacesPage: React.FC = () => {
                       situation.id
                     )}
                     tabIndex={-1}
-                    disableRipple
                     onClick={() => {
                       setExportModal({
                         ...exportModal,
