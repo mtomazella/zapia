@@ -10,17 +10,28 @@ export const EditSpaceMenuItem = styled(MenuItem)`
 
 export const Column = styled.section`
   width: 100%;
-  padding: 0 1rem;
+  padding: 1rem 1rem 0 1rem;
+
+  &.situations {
+    padding: 0 1rem;
+  }
 
   @media ${mediaQueries.desktop} {
     width: 50%;
     padding: 2rem 1rem;
+
+    &.situations {
+      height: 100vh;
+      overflow-y: auto;
+      scrollbar-color: white transparent;
+      scrollbar-width: thin;
+    }
   }
 `
 
 export const StyledSpace = styled.main`
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   width: 100%;
 
   @media ${mediaQueries.desktop} {

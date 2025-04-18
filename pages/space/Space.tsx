@@ -157,6 +157,20 @@ export const Space: React.FC = () => {
 
   return (
     <StyledSpace>
+      <Column className="situations">
+        {situations.map(situation => (
+          <Situation
+            key={situation.id}
+            situation={situation}
+            save={save}
+            roll={roll => rollHandler(roll, { situation })}
+            edit={goToEditPage}
+            deleteFn={deleteSituation}
+            duplicateFn={duplicateSituation}
+            getSituationJson={getSituationJson}
+          />
+        ))}
+      </Column>
       <Column>
         <div className="space-options">
           <IconButton onClick={openMenu}>
@@ -242,8 +256,6 @@ export const Space: React.FC = () => {
             </div>
           </CardActions>
         </Card>
-      </Column>
-      <Column>
         <Card className="search-bar">
           <ButtonTextField
             onChange={setSearch}
@@ -251,18 +263,6 @@ export const Space: React.FC = () => {
             size="small"
           />
         </Card>
-        {situations.map(situation => (
-          <Situation
-            key={situation.id}
-            situation={situation}
-            save={save}
-            roll={roll => rollHandler(roll, { situation })}
-            edit={goToEditPage}
-            deleteFn={deleteSituation}
-            duplicateFn={duplicateSituation}
-            getSituationJson={getSituationJson}
-          />
-        ))}
       </Column>
     </StyledSpace>
   )
