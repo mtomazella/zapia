@@ -45,11 +45,15 @@ export const EditSpacesPage: React.FC = () => {
     spaceName: string
     space: TSpace | null
     situationsSelected: string[]
+    exportGlobalVariables: boolean
+    exportCustomizations: boolean
   }>({
     open: false,
     spaceName: '',
     space: null,
     situationsSelected: [],
+    exportGlobalVariables: false,
+    exportCustomizations: false,
   })
 
   const [importModal, setImportModal] = useState<{
@@ -60,6 +64,8 @@ export const EditSpacesPage: React.FC = () => {
     contentLoaded: boolean
     situationsSelected: string[]
     error: string | null
+    importGlobalVariables: boolean
+    importCustomizations: boolean
   }>({
     open: false,
     spaceName: '',
@@ -68,6 +74,8 @@ export const EditSpacesPage: React.FC = () => {
     contentLoaded: false,
     situationsSelected: [],
     error: null,
+    importGlobalVariables: false,
+    importCustomizations: false,
   })
 
   const { push } = useRouter()
@@ -100,6 +108,8 @@ export const EditSpacesPage: React.FC = () => {
       space: TSpace | null
       spaceName: string
       situationsSelected: string[]
+      exportGlobalVariables: boolean
+      exportCustomizations: boolean
     }
   ) => {
     const space = spacesObject[exportModal.spaceName]
@@ -107,7 +117,16 @@ export const EditSpacesPage: React.FC = () => {
       exportModal.situationsSelected.includes(situation.id)
     )
     return JSON.stringify(
-      { [exportModal.spaceName]: { ...space, situations } },
+      {
+        [exportModal.spaceName]: {
+          ...space,
+          situations,
+          variables: exportModal.exportGlobalVariables
+            ? space.variables
+            : undefined,
+          // customizations: exportModal.exportCustomizations ? space.customizations : undefined,
+        },
+      },
       null,
       2
     )
@@ -173,6 +192,8 @@ export const EditSpacesPage: React.FC = () => {
 
     const space = spacesObject[importModal.spaceName]
     const importingSituations = importModal.importingContent.situations
+    const importingVariables = importModal.importingContent.variables
+    // const importingCustomizations = importModal.importingContent.customizations
 
     updateOrInsert(importModal.spaceName, {
       ...space,
@@ -188,6 +209,15 @@ export const EditSpacesPage: React.FC = () => {
           }
         }),
       ],
+      variables: importModal.importGlobalVariables
+        ? [
+            ...space.variables.filter(
+              v => importingVariables.findIndex(iv => iv.key === v.key) === -1
+            ),
+            ...importingVariables,
+          ]
+        : space.variables,
+      // customizations: { ...space.customizations, ...importModal.importCustomizations }
     })
 
     setImportModal({
@@ -224,6 +254,8 @@ export const EditSpacesPage: React.FC = () => {
                     spaceName: name,
                     space: spacesObject[name],
                     situationsSelected: [],
+                    exportGlobalVariables: false,
+                    exportCustomizations: false,
                   })
                 }
               />
@@ -239,6 +271,8 @@ export const EditSpacesPage: React.FC = () => {
                     contentLoaded: false,
                     situationsSelected: [],
                     error: null,
+                    importGlobalVariables: false,
+                    importCustomizations: false,
                   })
                 }
               />
@@ -272,6 +306,41 @@ export const EditSpacesPage: React.FC = () => {
       <Dialog open={exportModal.open}>
         <DialogTitle>Exportar {exportModal.spaceName}</DialogTitle>
         <DialogContent>
+          <List>
+            <ListItem>
+              <ListItemIcon>
+                <Checkbox
+                  edge="start"
+                  checked={exportModal.exportGlobalVariables}
+                  tabIndex={-1}
+                  onClick={() => {
+                    setExportModal({
+                      ...exportModal,
+                      exportGlobalVariables: !exportModal.exportGlobalVariables,
+                    })
+                  }}
+                />
+              </ListItemIcon>
+              <ListItemText primary="Incluir variáveis globais" />
+            </ListItem>
+            <ListItem>
+              <ListItemIcon>
+                <Checkbox
+                  edge="start"
+                  checked={exportModal.exportCustomizations}
+                  tabIndex={-1}
+                  onClick={() => {
+                    setExportModal({
+                      ...exportModal,
+                      exportCustomizations: !exportModal.exportCustomizations,
+                    })
+                  }}
+                />
+              </ListItemIcon>
+              <ListItemText primary="Incluir customizações" />
+            </ListItem>
+          </List>
+
           <p>Selecione as situações que deseja exportar:</p>
           <List>
             <ListItem>
@@ -386,6 +455,43 @@ export const EditSpacesPage: React.FC = () => {
 
           {importModal.contentLoaded && (
             <DialogContent>
+              <List>
+                <ListItem>
+                  <ListItemIcon>
+                    <Checkbox
+                      edge="start"
+                      checked={importModal.importGlobalVariables}
+                      tabIndex={-1}
+                      onClick={() => {
+                        setImportModal({
+                          ...importModal,
+                          importGlobalVariables:
+                            !importModal.importGlobalVariables,
+                        })
+                      }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText primary="Incluir variáveis globais" />
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>
+                    <Checkbox
+                      edge="start"
+                      checked={importModal.importCustomizations}
+                      tabIndex={-1}
+                      onClick={() => {
+                        setImportModal({
+                          ...importModal,
+                          importCustomizations:
+                            !importModal.importCustomizations,
+                        })
+                      }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText primary="Incluir customizações" />
+                </ListItem>
+              </List>
+
               <p>Selecione as situações que deseja importar:</p>
               <List>
                 <ListItem>
