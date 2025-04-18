@@ -19,12 +19,17 @@ export const Column = styled.section`
   @media ${mediaQueries.desktop} {
     width: 50%;
     padding: 2rem 1rem;
+    height: 100vh;
+    overflow-y: auto;
+    scrollbar-color: white transparent;
+    scrollbar-width: thin;
 
-    &.situations {
-      height: 100vh;
-      overflow-y: auto;
-      scrollbar-color: white transparent;
-      scrollbar-width: thin;
+    &.options {
+      direction: rtl;
+
+      > * {
+        direction: ltr;
+      }
     }
   }
 `
@@ -92,5 +97,9 @@ export const StyledSpace = styled.main`
     > div:last-of-type {
       padding-top: 5px;
     }
+  }
+
+  .global-variables {
+    margin: 1rem 0;
   }
 `

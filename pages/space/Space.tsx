@@ -16,7 +16,12 @@ import {
   MenuItem,
   Select,
 } from '@mui/material'
-import { useDieRoll, useSituations, useSpace, useUrlParameters } from 'hooks'
+import {
+  useDieRoll,
+  useSituations,
+  useSpace,
+  useUrlParameters,
+} from 'hooks'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import {
@@ -37,11 +42,14 @@ import { Situation } from 'components/Situation'
 import { Column, EditSpaceMenuItem, StyledSpace } from './Space.styled'
 import { useBot } from 'hooks/use-bot'
 import { useConnectionInfo } from 'hooks/use-connection'
+import { GlobalVariables } from 'components/GlobalVariables'
 
 export const Space: React.FC = () => {
   const { push } = useRouter()
   const { space: selectedSpace } = useUrlParameters()
-  const { spaces } = useSpace({ spaceName: selectedSpace })
+  const { spaces, space, updateOrInsert } = useSpace({
+    spaceName: selectedSpace,
+  })
   const spaceNames = Object.keys(spaces)
   const {
     situations: unfilteredSituations,
@@ -65,6 +73,7 @@ export const Space: React.FC = () => {
     completeTotal: completeDieResult,
     isRolling: isDieRolling,
     roll,
+    error: rollError,
   } = useDieRoll()
 
   const { sendRoll } = useBot({
@@ -106,7 +115,7 @@ export const Space: React.FC = () => {
 
   const rollNoSituation = useCallback(
     () => rollHandler(expressionText, { situation: null }),
-    [expressionText, rollHandler]
+    [rollHandler, expressionText]
   )
 
   const situations = useMemo(
@@ -168,10 +177,11 @@ export const Space: React.FC = () => {
             deleteFn={deleteSituation}
             duplicateFn={duplicateSituation}
             getSituationJson={getSituationJson}
+            globalVariables={space?.variables}
           />
         ))}
       </Column>
-      <Column>
+      <Column className="options">
         <div className="space-options">
           <IconButton onClick={openMenu}>
             <MoreVert />
@@ -211,7 +221,7 @@ export const Space: React.FC = () => {
         <div className="dice-box">
           <Die isRolling={isDieRolling} result={dieResult} />
         </div>
-        <span>{completeDieResult}</span>
+        <p>{rollError ?? completeDieResult}</p>
         <Card className="expression-builder">
           <CardContent>
             <ButtonTextField
@@ -256,6 +266,7 @@ export const Space: React.FC = () => {
             </div>
           </CardActions>
         </Card>
+
         <Card className="search-bar">
           <ButtonTextField
             onChange={setSearch}
@@ -263,6 +274,14 @@ export const Space: React.FC = () => {
             size="small"
           />
         </Card>
+
+        <GlobalVariables
+          className="global-variables"
+          variables={space?.variables}
+          onChange={variables => {
+            updateOrInsert(selectedSpace, { variables })
+          }}
+        />
       </Column>
     </StyledSpace>
   )

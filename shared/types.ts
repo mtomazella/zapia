@@ -30,8 +30,10 @@ export type TSituation = {
   controls?: TSituationControl[]
 }
 
+export type TSpaceVariable = TSituationVariable
 export type TSpace = {
   situations: TSituation[]
+  variables: TSpaceVariable[]
 }
 
 export type TSavedData = {

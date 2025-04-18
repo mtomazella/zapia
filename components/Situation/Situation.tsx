@@ -20,8 +20,6 @@ import {
   Chip,
   Dialog,
   DialogActions,
-  DialogContent,
-  DialogContentText,
   DialogTitle,
   IconButton,
   Menu,
@@ -33,7 +31,7 @@ import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state'
 import { useSituationInterpreter } from 'hooks'
 import { isEmpty } from 'lodash'
 import { ACTION_TYPE_COLORS, ACTION_TYPE_DISPLAY_TEXT } from 'shared/constants'
-import { TSituation } from 'shared/types'
+import { TSituation, TSpaceVariable } from 'shared/types'
 import { AppPalette } from 'style/palette'
 import { v4 } from 'uuid'
 
@@ -52,6 +50,7 @@ type TSituationComponent = {
   deleteFn: (id: string) => void
   duplicateFn: (id: string) => void
   getSituationJson: (id: string) => string
+  globalVariables?: TSpaceVariable[]
 }
 
 export const Situation: React.FC<TSituationComponent> = ({
@@ -62,6 +61,7 @@ export const Situation: React.FC<TSituationComponent> = ({
   deleteFn,
   duplicateFn,
   getSituationJson,
+  globalVariables,
 }) => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
 
@@ -72,6 +72,7 @@ export const Situation: React.FC<TSituationComponent> = ({
   const { expression, displayExpression, error, computedVariables } =
     useSituationInterpreter({
       situation,
+      globalVariables,
     })
 
   const rollCurrentExpression = useCallback(

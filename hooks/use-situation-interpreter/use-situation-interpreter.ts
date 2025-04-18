@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react'
 
 import { Parser } from 'expr-eval'
 import { clone, isNaN } from 'lodash'
-import { TSituation } from 'shared/types'
+import { TSituation, TSpaceVariable } from 'shared/types'
 import { validate } from 'utils/dice'
 
 export type TComputedVariable = {
@@ -11,22 +11,26 @@ export type TComputedVariable = {
   computedValue: string
 }
 
-export const useSituationInterpreter = ({
-  situation,
-}: {
-  situation: TSituation
-}): {
+type Result = {
   expression: string
   displayExpression: string
   error: string | null
   computedVariables: Record<string, TComputedVariable>
-} => {
+}
+
+export const useSituationInterpreter = ({
+  situation,
+  globalVariables = [],
+}: {
+  situation: TSituation
+  globalVariables?: TSpaceVariable[]
+}): Result => {
   const { expression, variables = [], controls = [] } = situation
 
   const [error, setError] = useState<string | null>(null)
   const [displayExpression, setDisplayExpression] = useState('')
 
-  const cleanExpression = (expr: string) => expr.replaceAll(' ', '')
+  const cleanExpression = (expr: string) => (expr ?? '').replaceAll(' ', '')
 
   const getVariablesToReplace = (expr: string) => {
     try {
@@ -40,7 +44,7 @@ export const useSituationInterpreter = ({
 
   const computeVariableValue = useCallback(
     (targetKey: string) => {
-      const foundKey = variables.find(
+      const foundKey = [...variables, ...globalVariables].find(
         ({ key }) => key.toLowerCase() === targetKey.toLowerCase()
       )
       if (!foundKey) return null
@@ -86,7 +90,7 @@ export const useSituationInterpreter = ({
 
       return variableValue.toString()
     },
-    [variables, controls]
+    [variables, controls, globalVariables]
   )
 
   const applyVariablesToExpression = useCallback(
