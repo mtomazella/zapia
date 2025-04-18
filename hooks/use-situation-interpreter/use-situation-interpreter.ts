@@ -20,12 +20,12 @@ type Result = {
 
 export const useSituationInterpreter = ({
   situation,
-  globalVariables = [],
+  globalVariables,
 }: {
   situation: TSituation
   globalVariables?: TSpaceVariable[]
 }): Result => {
-  const { expression, variables = [], controls = [] } = situation
+  const { expression, variables = [], controls = [] } = situation ?? {}
 
   const [error, setError] = useState<string | null>(null)
   const [displayExpression, setDisplayExpression] = useState('')
@@ -44,7 +44,7 @@ export const useSituationInterpreter = ({
 
   const computeVariableValue = useCallback(
     (targetKey: string) => {
-      const foundKey = [...variables, ...globalVariables].find(
+      const foundKey = [...variables, ...(globalVariables ?? [])].find(
         ({ key }) => key.toLowerCase() === targetKey.toLowerCase()
       )
       if (!foundKey) return null
@@ -111,7 +111,7 @@ export const useSituationInterpreter = ({
 
       return builtExpression
     },
-    [variables, controls]
+    [variables, controls, getVariablesToReplace, computeVariableValue]
   )
 
   const computedVariables = useMemo(() => {
@@ -153,7 +153,7 @@ export const useSituationInterpreter = ({
     }
 
     return builtExpression
-  }, [situation])
+  }, [expression, globalVariables])
 
   return {
     expression: preparedExpression,

@@ -7,7 +7,7 @@ import {
 import { Clear, Add } from '@mui/icons-material'
 import { StyledVariables, VariableTable } from './GlobalVariables.styled'
 import { TSpaceVariable } from 'shared/types'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 export type GlobalVariablesProps = {
   className?: string
@@ -22,6 +22,16 @@ export const GlobalVariables = ({
 }: GlobalVariablesProps) => {
   const [newKey, setNewKey] = useState('')
   const [newValue, setNewValue] = useState('')
+
+  const addNew = useCallback(() => {
+    const key = newKey.trim()
+    const value = newValue.trim()
+    if (key && value) {
+      onChange?.([...(variables || []), { key, value }])
+      setNewKey('')
+      setNewValue('')
+    }
+  }, [variables, newKey, newValue, setNewKey, setNewValue, onChange])
 
   return (
     <StyledVariables className={className}>
@@ -39,43 +49,54 @@ export const GlobalVariables = ({
               </tr>
             </thead>
             <tbody>
-              {(variables ?? []).map(({ key, value }) => (
-                <tr key={key}>
-                  <td className="key">{key}</td>
-                  <td>
-                    <input
-                      type="text"
-                      value={value}
-                      onChange={event => {
-                        const newValue = event.target.value
-                        onChange?.(
-                          variables?.map(variable => {
-                            if (variable.key === key) {
-                              return { ...variable, value: newValue }
-                            }
-                            return variable
-                          }) || []
-                        )
-                      }}
-                    />
-                  </td>
-                  <td>
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      color="error"
-                      onClick={() => {
-                        onChange?.(
-                          variables?.filter(variable => variable.key !== key) ||
-                            []
-                        )
-                      }}
-                    >
-                      <Clear fontSize="small" />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
+              {(variables ?? [])
+                .sort((a, b) => {
+                  if (a.key < b.key) {
+                    return -1
+                  }
+                  if (a.key > b.key) {
+                    return 1
+                  }
+                  return 0
+                })
+                .map(({ key, value }) => (
+                  <tr key={key}>
+                    <td className="key">{key}</td>
+                    <td>
+                      <input
+                        type="text"
+                        value={value}
+                        onChange={event => {
+                          const newValue = event.target.value
+                          onChange?.(
+                            variables?.map(variable => {
+                              if (variable.key === key) {
+                                return { ...variable, value: newValue }
+                              }
+                              return variable
+                            }) || []
+                          )
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        color="error"
+                        onClick={() => {
+                          onChange?.(
+                            variables?.filter(
+                              variable => variable.key !== key
+                            ) || []
+                          )
+                        }}
+                      >
+                        <Clear fontSize="small" />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
               <tr>
                 <td className="key">
                   <input
@@ -83,6 +104,11 @@ export const GlobalVariables = ({
                     value={newKey}
                     onChange={event => {
                       setNewKey(event.target.value)
+                    }}
+                    onKeyDown={event => {
+                      if (event.key === 'Enter') {
+                        addNew()
+                      }
                     }}
                   />
                 </td>
@@ -93,6 +119,11 @@ export const GlobalVariables = ({
                     onChange={event => {
                       setNewValue(event.target.value)
                     }}
+                    onKeyDown={event => {
+                      if (event.key === 'Enter') {
+                        addNew()
+                      }
+                    }}
                   />
                 </td>
                 <td>
@@ -100,15 +131,7 @@ export const GlobalVariables = ({
                     variant="outlined"
                     size="small"
                     color="success"
-                    onClick={() => {
-                      const key = newKey.trim()
-                      const value = newValue.trim()
-                      if (key && value) {
-                        onChange?.([...(variables || []), { key, value }])
-                        setNewKey('')
-                        setNewValue('')
-                      }
-                    }}
+                    onClick={addNew}
                   >
                     <Add fontSize="small" />
                   </Button>

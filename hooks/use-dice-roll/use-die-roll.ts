@@ -20,6 +20,7 @@ export const useDieRoll = ({ duration = 1000 }: UseDieRollParams = {}) => {
     async (expression: string) => {
       setError(undefined)
       setIsRolling(true)
+      setResult(undefined)
       expression = !expression ? '1d20' : expression
 
       if (!validate(expression)) {

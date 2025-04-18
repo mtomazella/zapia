@@ -18,6 +18,7 @@ import {
 } from '@mui/material'
 import {
   useDieRoll,
+  useSituationInterpreter,
   useSituations,
   useSpace,
   useUrlParameters,
@@ -68,6 +69,15 @@ export const Space: React.FC = () => {
   const [menuAnchor, setMenuAnchor] = React.useState<null | HTMLElement>(null)
   const isMenuOpen = Boolean(menuAnchor)
 
+  const { expression: oneShotExpression } = useSituationInterpreter({
+    situation: {
+      id: 'one-shot',
+      name: '',
+      expression: expressionText,
+    },
+    globalVariables: space?.variables,
+  })
+
   const {
     result: dieResult,
     completeTotal: completeDieResult,
@@ -113,9 +123,9 @@ export const Space: React.FC = () => {
     [expressionText, sendRoll, connectionInfo, roll]
   )
 
-  const rollNoSituation = useCallback(
-    () => rollHandler(expressionText, { situation: null }),
-    [rollHandler, expressionText]
+  const rollOneShot = useCallback(
+    () => rollHandler(oneShotExpression, { situation: null }),
+    [rollHandler, oneShotExpression]
   )
 
   const situations = useMemo(
@@ -164,22 +174,24 @@ export const Space: React.FC = () => {
     setMenuAnchor(null)
   }
 
+  const situationElements = useMemo(() => situations.map(situation => (
+    <Situation
+      key={situation.id}
+      situation={situation}
+      save={save}
+      roll={roll => rollHandler(roll, { situation })}
+      edit={goToEditPage}
+      deleteFn={deleteSituation}
+      duplicateFn={duplicateSituation}
+      getSituationJson={getSituationJson}
+      globalVariables={space?.variables}
+    />
+  )), [situations, save, rollHandler, goToEditPage, deleteSituation, duplicateSituation, getSituationJson, space?.variables])
+
   return (
     <StyledSpace>
       <Column className="situations">
-        {situations.map(situation => (
-          <Situation
-            key={situation.id}
-            situation={situation}
-            save={save}
-            roll={roll => rollHandler(roll, { situation })}
-            edit={goToEditPage}
-            deleteFn={deleteSituation}
-            duplicateFn={duplicateSituation}
-            getSituationJson={getSituationJson}
-            globalVariables={space?.variables}
-          />
-        ))}
+        {situationElements}
       </Column>
       <Column className="options">
         <div className="space-options">
@@ -226,7 +238,7 @@ export const Space: React.FC = () => {
           <CardContent>
             <ButtonTextField
               label="Rodar Dado"
-              actionFn={rollNoSituation}
+              actionFn={rollOneShot}
               value={expressionText}
               onChange={setExpressionText}
               icon={<FontAwesomeIcon icon={faDiceD20} />}
