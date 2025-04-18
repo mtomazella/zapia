@@ -28,7 +28,7 @@ import { SituationValidationError, validateSituation } from 'utils/clipboard'
 type Form = TSituation
 
 export const SituationPage: React.FC = () => {
-  const { back } = useRouter()
+  const { push } = useRouter()
   const {
     space: spaceName,
     id: situationId,
@@ -70,6 +70,15 @@ export const SituationPage: React.FC = () => {
       variables: situation?.variables ?? [],
     })
   }, [situation])
+
+  const back = () => {
+    push({
+      pathname: '/space',
+      query: {
+        space: spaceName,
+      },
+    })
+  }
 
   const onSubmit = (data: Form) => {
     updateById({ ...(situation as TSituation), ...data })
