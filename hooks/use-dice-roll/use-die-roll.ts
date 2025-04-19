@@ -31,8 +31,6 @@ export const useDieRoll = ({ duration = 1000 }: UseDieRollParams = {}) => {
         return
       }
 
-      console.log(expression)
-
       const result = await new Promise((resolve, reject) => {
         setTimeout(() => {
           const result = rpgRoller.roll(expression)

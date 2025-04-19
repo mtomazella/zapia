@@ -25,7 +25,7 @@ export const useSituationInterpreter = ({
   situation: TSituation
   globalVariables?: TSpaceVariable[]
 }): Result => {
-  const { expression, variables = [], controls = [] } = situation ?? {}
+  const { expression, variables, controls } = situation ?? {}
 
   const [error, setError] = useState<string | null>(null)
   const [displayExpression, setDisplayExpression] = useState('')
@@ -44,13 +44,13 @@ export const useSituationInterpreter = ({
 
   const computeVariableValue = useCallback(
     (targetKey: string) => {
-      const foundKey = [...variables, ...(globalVariables ?? [])].find(
+      const foundKey = [...(variables ?? []), ...(globalVariables ?? [])].find(
         ({ key }) => key.toLowerCase() === targetKey.toLowerCase()
       )
       if (!foundKey) return null
 
       let variableValue = foundKey.value
-      controls.forEach(({ active, actionType, value }) => {
+      ;(controls ?? []).forEach(({ active, actionType, value }) => {
         if (!active || actionType !== 'variable') return
 
         const variableChanges = value.split(';')
@@ -115,7 +115,7 @@ export const useSituationInterpreter = ({
   )
 
   const computedVariables = useMemo(() => {
-    const result = variables
+    const result = (variables ?? [])
       .map(({ key, value }) => {
         const computedValue = applyVariablesToExpression(`[${key}]`)
         return { key, value, computedValue }
@@ -134,7 +134,7 @@ export const useSituationInterpreter = ({
     const treatedExpression = cleanExpression(expression)
 
     let controlledExpression = treatedExpression
-    controls.forEach(({ active, actionType, value }) => {
+    ;(controls ?? []).forEach(({ active, actionType, value }) => {
       if (!active) return
 
       if (actionType === 'substitute') controlledExpression = value
@@ -153,7 +153,7 @@ export const useSituationInterpreter = ({
     }
 
     return builtExpression
-  }, [expression, globalVariables])
+  }, [expression, controls, globalVariables])
 
   return {
     expression: preparedExpression,
