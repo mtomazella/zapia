@@ -1,9 +1,15 @@
-import React, { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import React, { useCallback, useEffect, useState } from 'react'
 
-import { Button, TextField } from '@mui/material'
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from '@mui/material'
 import { useRouter } from 'next/router'
-import { TConnectionInfo } from 'shared/types'
+import { TAllConnectionInfo } from 'shared/types'
 
 import { Die } from 'components'
 
@@ -14,42 +20,82 @@ import { useConnectionInfo } from 'hooks/use-connection'
 import Image from 'next/image'
 
 import channelImage from './assets/channel.png'
-
-type Form = TConnectionInfo
+import { useSpace } from 'hooks'
 
 export const ConnectionPage: React.FC = () => {
   const { back } = useRouter()
-  const { connectionInfo, updateOrInsert } = useConnectionInfo()
+  const { getConnections, updateOrInsert } = useConnectionInfo()
+  const { spaces } = useSpace()
 
-  const { register, reset, handleSubmit } = useForm<Form>()
-
-  useEffect(() => {
-    reset(connectionInfo)
-  }, [connectionInfo])
+  const [selectedSpace, setSelectedSpace] = useState<string>(
+    Object.keys(spaces)[0]
+  )
+  const [updatedConnections, setUpdatedConnections] =
+    useState<TAllConnectionInfo>(getConnections())
 
   const getBot = () => {
     window.open(BOT_URL, '_blank')
   }
 
-  const onSubmit = (data: Form) => {
-    updateOrInsert(data)
+  const save = useCallback(() => {
+    const newConnections: TAllConnectionInfo = {
+      ...updatedConnections,
+      [selectedSpace]: {
+        ...updatedConnections[selectedSpace],
+        sendRolls: true,
+      },
+    }
+    updateOrInsert(newConnections)
     back()
-  }
+  }, [updatedConnections, selectedSpace, updateOrInsert, back])
 
   return (
-    <StyledConnectionPage onSubmit={handleSubmit(onSubmit)}>
+    <StyledConnectionPage>
       <section>
         <Die isRolling rollForever animationDuration={10000} />
 
+        <FormControl fullWidth className="select-space">
+          <InputLabel id="select-space-label">Selecione o Espaço</InputLabel>
+          <Select
+            labelId="select-space-label"
+            label="Selecione o Espaço"
+            value={selectedSpace}
+            onChange={e => setSelectedSpace(e.target.value)}
+          >
+            {Object.keys(spaces).map(space => (
+              <MenuItem key={space} value={space}>
+                {space}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <TextField
           label="Chave do Canal"
           InputLabelProps={{ shrink: true }}
-          {...register('destinationKey')}
+          value={updatedConnections[selectedSpace]?.destinationKey ?? ''}
+          onChange={e =>
+            setUpdatedConnections({
+              ...updatedConnections,
+              [selectedSpace]: {
+                ...updatedConnections[selectedSpace],
+                destinationKey: e.target.value,
+              },
+            })
+          }
         />
         <TextField
           label="Nome do Jogador (opcional)"
           InputLabelProps={{ shrink: true }}
-          {...register('player')}
+          value={updatedConnections[selectedSpace]?.player ?? ''}
+          onChange={e =>
+            setUpdatedConnections({
+              ...updatedConnections,
+              [selectedSpace]: {
+                ...updatedConnections[selectedSpace],
+                player: e.target.value,
+              },
+            })
+          }
         />
 
         <div className="info">
@@ -75,7 +121,7 @@ export const ConnectionPage: React.FC = () => {
         <Button size="large" variant="outlined" onClick={back}>
           Cancelar
         </Button>
-        <Button size="large" variant="contained" type="submit">
+        <Button size="large" variant="contained" onClick={save}>
           Salvar
         </Button>
       </section>

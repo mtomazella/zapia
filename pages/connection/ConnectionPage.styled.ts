@@ -32,6 +32,11 @@ export const StyledConnectionPage = styled.form`
       }
     }
 
+    > .select-space {
+      width: 100%;
+      margin: 1rem 0;
+    }
+
     :not(.form-buttons) {
       padding: 1rem 1rem 10rem 1rem;
 

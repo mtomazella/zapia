@@ -46,3 +46,4 @@ export type TConnectionInfo = {
   destinationKey?: string
   sendRolls?: boolean
 }
+export type TAllConnectionInfo = Record<string, TConnectionInfo>

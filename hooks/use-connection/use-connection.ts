@@ -1,43 +1,59 @@
-import { useEffect, useState } from 'react'
+'use client'
+
+import { useEffect, useMemo, useState } from 'react'
 
 import { CONNECTION_STORAGE_KEY } from 'shared/constants'
-import { TConnectionInfo } from 'shared/types'
+import { TAllConnectionInfo, TConnectionInfo } from 'shared/types'
 
-const defaultData: TConnectionInfo = {
-  destinationKey: undefined,
-  player: undefined,
-  sendRolls: true,
-}
+const defaultData: TAllConnectionInfo = {}
 
 export const useConnectionInfo = ({
   spaceName,
 }: { spaceName?: string } = {}) => {
-  const getConnectionInfo = (): TConnectionInfo => {
-    const data = localStorage.getItem(CONNECTION_STORAGE_KEY)
-    return data ? (JSON.parse(data) as TConnectionInfo) : defaultData
+  const [spaceConnection, setSpaceConnection] = useState<
+    TConnectionInfo | undefined
+  >()
+
+  const updateSpaceConnection = () => {
+    const connections = getConnections()
+    const connection = connections?.[spaceName ?? '']
+    setSpaceConnection(connection)
   }
-
-  const saveInLocalStorage = (data: TConnectionInfo) =>
-    localStorage.setItem(CONNECTION_STORAGE_KEY, JSON.stringify(data))
-
-  const updateOrInsert = (info: TConnectionInfo = defaultData) => {
-    const savedData = getConnectionInfo() as TConnectionInfo
-    saveInLocalStorage({
-      ...defaultData,
-      ...savedData,
-      ...info,
-    })
-    setConnectionInfo(getConnectionInfo())
-  }
-
-  const [connectionInfo, setConnectionInfo] = useState<TConnectionInfo>({})
 
   useEffect(() => {
-    setConnectionInfo(getConnectionInfo())
+    updateSpaceConnection()
+  }, [])
+  useEffect(() => {
+    updateSpaceConnection()
   }, [spaceName])
 
+  const getConnections = (): TAllConnectionInfo => {
+    const data = localStorage?.getItem(CONNECTION_STORAGE_KEY) ?? ''
+    const connections = data
+      ? (JSON.parse(data) as TAllConnectionInfo)
+      : defaultData
+    return connections
+  }
+
+  const saveInLocalStorage = (data: TAllConnectionInfo) =>
+    localStorage.setItem(CONNECTION_STORAGE_KEY, JSON.stringify(data))
+
+  const updateOrInsert = (info: TAllConnectionInfo = defaultData) => {
+    const savedData = getConnections()
+    const newData = { ...defaultData, ...savedData }
+    Object.keys(info).forEach(key => {
+      newData[key] = {
+        ...savedData[key],
+        ...info[key],
+      }
+    })
+    saveInLocalStorage(newData)
+    updateSpaceConnection()
+  }
+
   return {
-    connectionInfo,
+    getConnections,
     updateOrInsert,
+    spaceConnection,
   }
 }

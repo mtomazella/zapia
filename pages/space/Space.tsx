@@ -1,8 +1,10 @@
+"use client"
+
 import React, { useCallback, useMemo, useState } from 'react'
 
 import { faDiceD20, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { AddCircle, CheckBox, MoreVert, RssFeed } from '@mui/icons-material'
+import { AddCircle, MoreVert, RssFeed } from '@mui/icons-material'
 import {
   Box,
   Button,
@@ -52,7 +54,7 @@ export const Space: React.FC = () => {
     spaceName: selectedSpace,
   })
   const spaceNames = Object.keys(spaces)
-  const {
+    const {
     situations: unfilteredSituations,
     updateOrInsert: updateById,
     deleteSituation,
@@ -61,8 +63,8 @@ export const Space: React.FC = () => {
   } = useSituations({
     spaceName: selectedSpace,
   })
-  const { connectionInfo, updateOrInsert: updateConnectionInfo } =
-    useConnectionInfo()
+  const { spaceConnection, updateOrInsert: updateConnectionInfo } =
+    useConnectionInfo({ spaceName: selectedSpace })
 
   const [expressionText, setExpressionText] = useState('')
   const [search, setSearch] = useState('')
@@ -87,7 +89,7 @@ export const Space: React.FC = () => {
   } = useDieRoll()
 
   const { sendRoll } = useBot({
-    destinationKey: connectionInfo.destinationKey ?? '',
+    destinationKey: spaceConnection?.destinationKey ?? '',
   })
 
   const addToExpression = (value: string) =>
@@ -113,14 +115,14 @@ export const Space: React.FC = () => {
         result: rollResult?.result?.total?.toString() ?? '',
         detailedResult: rollResult?.result?.toString() ?? '',
         space: selectedSpace,
-        player: connectionInfo.player,
+        player: spaceConnection?.player,
         situation: meta?.situation?.name,
         controls: meta?.situation?.controls?.filter(control => control.active),
       }
 
-      if (connectionInfo.sendRolls) sendRoll(rollToSend)
+      if (spaceConnection?.sendRolls) sendRoll(rollToSend)
     },
-    [expressionText, sendRoll, connectionInfo, roll]
+    [expressionText, sendRoll, spaceConnection, roll]
   )
 
   const rollOneShot = useCallback(
@@ -162,7 +164,7 @@ export const Space: React.FC = () => {
 
   const onSendRollsChange = useCallback(
     (_: unknown, checked: boolean) => {
-      updateConnectionInfo({ sendRolls: checked })
+      updateConnectionInfo({ [selectedSpace ?? 'default']: { sendRolls: checked }})
     },
     [updateConnectionInfo]
   )
@@ -224,7 +226,7 @@ export const Space: React.FC = () => {
             Conexão
           </Button>
           <Checkbox
-            checked={connectionInfo.sendRolls ?? false}
+            checked={spaceConnection?.sendRolls ?? false}
             color="info"
             onChange={onSendRollsChange}
           />
