@@ -13,12 +13,16 @@ export type GlobalVariablesProps = {
   className?: string
   variables?: TSpaceVariable[]
   onChange?: (variables: TSpaceVariable[]) => void
+  colapse?: boolean
+  toggleColapse?: () => void
 }
 
 export const GlobalVariables = ({
   className,
   onChange,
   variables,
+  colapse,
+  toggleColapse,
 }: GlobalVariablesProps) => {
   const [newKey, setNewKey] = useState('')
   const [newValue, setNewValue] = useState('')
@@ -35,7 +39,7 @@ export const GlobalVariables = ({
 
   return (
     <StyledVariables className={className}>
-      <Accordion>
+      <Accordion expanded={colapse} onChange={toggleColapse}>
         <AccordionSummary>
           <h3>Variáveis Gerais</h3>
         </AccordionSummary>

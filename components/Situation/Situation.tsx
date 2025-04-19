@@ -51,6 +51,10 @@ type TSituationComponent = {
   duplicateFn: (id: string) => void
   getSituationJson: (id: string) => string
   globalVariables?: TSpaceVariable[]
+  variablesColapse?: boolean
+  toggleVariablesColapse?: () => void
+  controlsColapse?: boolean
+  toggleControlsColapse?: () => void
 }
 
 export const Situation: React.FC<TSituationComponent> = ({
@@ -62,6 +66,10 @@ export const Situation: React.FC<TSituationComponent> = ({
   duplicateFn,
   getSituationJson,
   globalVariables,
+  variablesColapse,
+  toggleVariablesColapse,
+  controlsColapse,
+  toggleControlsColapse,
 }) => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
 
@@ -119,7 +127,7 @@ export const Situation: React.FC<TSituationComponent> = ({
       </CardContent>
       <CardContent>
         {!!controls && controls.length > 0 && (
-          <Accordion defaultExpanded>
+          <Accordion expanded={controlsColapse} onChange={toggleControlsColapse}>
             <AccordionSummary>
               <Settings
                 fontSize="small"
@@ -151,7 +159,7 @@ export const Situation: React.FC<TSituationComponent> = ({
           </Accordion>
         )}
         {!!variables && !isEmpty(variables) && (
-          <Accordion defaultExpanded>
+          <Accordion expanded={variablesColapse} onChange={toggleVariablesColapse}>
             <AccordionSummary>
               <DataArray
                 fontSize="small"

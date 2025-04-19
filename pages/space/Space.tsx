@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import React, { useCallback, useMemo, useState } from 'react'
 
@@ -46,6 +46,7 @@ import { Column, EditSpaceMenuItem, StyledSpace } from './Space.styled'
 import { useBot } from 'hooks/use-bot'
 import { useConnectionInfo } from 'hooks/use-connection'
 import { GlobalVariables } from 'components/GlobalVariables'
+import { useColapses } from 'hooks/use-colapses'
 
 export const Space: React.FC = () => {
   const { push } = useRouter()
@@ -54,7 +55,7 @@ export const Space: React.FC = () => {
     spaceName: selectedSpace,
   })
   const spaceNames = Object.keys(spaces)
-    const {
+  const {
     situations: unfilteredSituations,
     updateOrInsert: updateById,
     deleteSituation,
@@ -65,6 +66,7 @@ export const Space: React.FC = () => {
   })
   const { spaceConnection, updateOrInsert: updateConnectionInfo } =
     useConnectionInfo({ spaceName: selectedSpace })
+  const { colapses, toggle } = useColapses()
 
   const [expressionText, setExpressionText] = useState('')
   const [search, setSearch] = useState('')
@@ -164,7 +166,9 @@ export const Space: React.FC = () => {
 
   const onSendRollsChange = useCallback(
     (_: unknown, checked: boolean) => {
-      updateConnectionInfo({ [selectedSpace ?? 'default']: { sendRolls: checked }})
+      updateConnectionInfo({
+        [selectedSpace ?? 'default']: { sendRolls: checked },
+      })
     },
     [updateConnectionInfo]
   )
@@ -176,25 +180,46 @@ export const Space: React.FC = () => {
     setMenuAnchor(null)
   }
 
-  const situationElements = useMemo(() => situations.map(situation => (
-    <Situation
-      key={situation.id}
-      situation={situation}
-      save={save}
-      roll={roll => rollHandler(roll, { situation })}
-      edit={goToEditPage}
-      deleteFn={deleteSituation}
-      duplicateFn={duplicateSituation}
-      getSituationJson={getSituationJson}
-      globalVariables={space?.variables}
-    />
-  )), [situations, save, rollHandler, goToEditPage, deleteSituation, duplicateSituation, getSituationJson, space?.variables])
+  const situationElements = useMemo(
+    () =>
+      situations.map(situation => (
+        <Situation
+          key={situation.id}
+          situation={situation}
+          save={save}
+          roll={roll => rollHandler(roll, { situation })}
+          edit={goToEditPage}
+          deleteFn={deleteSituation}
+          duplicateFn={duplicateSituation}
+          getSituationJson={getSituationJson}
+          globalVariables={space?.variables}
+          controlsColapse={colapses[`${situation.id}-controls`] ?? false}
+          toggleControlsColapse={() =>
+            toggle(`${situation.id}-controls`)
+          }
+          variablesColapse={colapses[`${situation.id}-variables`] ?? false}
+          toggleVariablesColapse={() =>
+            toggle(`${situation.id}-variables`)
+          }
+        />
+      )),
+    [
+      situations,
+      save,
+      rollHandler,
+      goToEditPage,
+      deleteSituation,
+      duplicateSituation,
+      getSituationJson,
+      space?.variables,
+      colapses,
+      toggle,
+    ]
+  )
 
   return (
     <StyledSpace>
-      <Column className="situations">
-        {situationElements}
-      </Column>
+      <Column className="situations">{situationElements}</Column>
       <Column className="options">
         <div className="space-options">
           <IconButton onClick={openMenu}>
@@ -295,6 +320,10 @@ export const Space: React.FC = () => {
           onChange={variables => {
             updateOrInsert(selectedSpace, { variables })
           }}
+          colapse={colapses[`${selectedSpace}-variables`] ?? false}
+          toggleColapse={() =>
+            toggle(`${selectedSpace}-variables`)
+          }
         />
       </Column>
     </StyledSpace>

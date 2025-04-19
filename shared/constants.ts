@@ -15,6 +15,7 @@ export const ACTION_TYPE_COLORS: Record<TActionType, MaterialColor> = {
 export const LOCAL_STORAGE_KEY = 'rpg-dice-data'
 export const DEFAULT_SPACE = 'Padrão'
 export const CONNECTION_STORAGE_KEY = 'rpg-dice-connection'
+export const COLAPSES_STORAGE_KEY = 'rpg-dice-colapses'
 
 export const SPACE_PAGE_ROUTE = ''
 export const EDIT_SITUATION_PAGE_ROUTE = 'situation'
