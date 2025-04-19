@@ -17,16 +17,23 @@ const theme = createTheme({
     primary: AppPalette.brand.teal,
   },
 })
+function SafeHydrate({ children }: { children: React.ReactNode }) {
+  return (
+    <div suppressHydrationWarning>
+      {typeof window === 'undefined' ? null : children}
+    </div>
+  )
+}
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <>
+    <SafeHydrate>
       <GlobalStyle />
       <MaterialThemeProvider theme={theme}>
         <CssBaseline />
         <Component {...pageProps} />
       </MaterialThemeProvider>
-    </>
+    </SafeHydrate>
   )
 }
 
