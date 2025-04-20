@@ -1,6 +1,4 @@
-import { cyan, orange, teal, yellow } from '@mui/material/colors'
 import { MaterialColor, TActionType } from './types'
-import { hslToRgb } from '@mui/material'
 
 export const ACTION_TYPE_DISPLAY_TEXT: Record<TActionType, string> = {
   add: 'Adicionar',
@@ -32,7 +30,7 @@ export const BOT_URL =
 export const DIE_COLORS: Record<string, { color: string; name: string }> =
   Array.from({ length: 30 })
     .map((_, i) => ({
-      color: ((h, s, l) => {
+      color: ((h = 0, s = 0, l = 0) => {
         l /= 100
         const a = (s * Math.min(l, 1 - l)) / 100
         const f = (n: any) => {
