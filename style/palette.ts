@@ -1,7 +1,7 @@
 export const AppPalette = {
   neutral: {
     white: '#FFF',
-    black: '#000',
+    black: '#121212',
   },
   gray: [
     '#000',

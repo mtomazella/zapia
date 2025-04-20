@@ -3,12 +3,14 @@ import React from 'react'
 import { range } from 'lodash'
 
 import { StyledDie } from './Die.styled'
+import { DEFAULT_DIE_COLOR, DieColor } from 'shared/constants'
 
 type DiceProps = {
   result?: string | number
   isRolling: boolean
   rollForever?: boolean
   animationDuration?: number
+  color?: DieColor
 }
 
 export const Die: React.FC<DiceProps> = ({
@@ -16,6 +18,7 @@ export const Die: React.FC<DiceProps> = ({
   isRolling,
   rollForever = false,
   animationDuration = 1000,
+  color = DEFAULT_DIE_COLOR,
 }) => {
   return (
     <StyledDie className="container center">
@@ -29,7 +32,7 @@ export const Die: React.FC<DiceProps> = ({
         }}
       >
         {range(1, 20).map(i => (
-          <div className={`side-${i}`} key={i} />
+          <div className={`side-${i} color-${color}`} key={i} />
         ))}
       </div>
     </StyledDie>

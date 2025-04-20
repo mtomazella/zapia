@@ -1,3 +1,5 @@
+import { DieColor } from "./constants"
+
 export type MaterialColor =
   | 'default'
   | 'primary'
@@ -31,9 +33,16 @@ export type TSituation = {
 }
 
 export type TSpaceVariable = TSituationVariable
+
+export type TSpaceCustomization = {
+  dieColor?: DieColor
+  dieSpeed?: number
+}
+
 export type TSpace = {
   situations: TSituation[]
   variables: TSpaceVariable[]
+  customization: TSpaceCustomization
 }
 
 export type TSavedData = {

@@ -20,15 +20,16 @@ import { useConnectionInfo } from 'hooks/use-connection'
 import Image from 'next/image'
 
 import channelImage from './assets/channel.png'
-import { useSpace } from 'hooks'
+import { useSpace, useUrlParameters } from 'hooks'
 
 export const ConnectionPage: React.FC = () => {
   const { back } = useRouter()
+  const { space } = useUrlParameters()
   const { getConnections, updateOrInsert } = useConnectionInfo()
   const { spaces } = useSpace()
 
   const [selectedSpace, setSelectedSpace] = useState<string>(
-    Object.keys(spaces)[0]
+    space ? space : Object.keys(spaces)[0]
   )
   const [updatedConnections, setUpdatedConnections] =
     useState<TAllConnectionInfo>(getConnections())

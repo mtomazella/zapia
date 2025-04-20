@@ -6,7 +6,9 @@ import { TSavedData, TSpace } from 'shared/types'
 
 const defaultData: TSavedData = {
   version: '0.1',
-  spaces: { [DEFAULT_SPACE]: { situations: [], variables: [] } },
+  spaces: {
+    [DEFAULT_SPACE]: { situations: [], variables: [], customization: {} },
+  },
 }
 
 type TUseSpaceProps = {

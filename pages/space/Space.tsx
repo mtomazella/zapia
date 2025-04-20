@@ -29,6 +29,7 @@ import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import {
   CONNECTION_CONFIG_ROUTE,
+  CUSTOMIZATION_PAGE_ROUTE,
   DEFAULT_SPACE,
   EDIT_SITUATION_PAGE_ROUTE,
   EDIT_SPACES_PAGE_ROUTE,
@@ -145,16 +146,29 @@ export const Space: React.FC = () => {
     [unfilteredSituations, search]
   )
 
-  const goToEditPage = (id: string) =>
-    push(
-      `/${EDIT_SITUATION_PAGE_ROUTE}?id=${id}${
-        selectedSpace ? `&space=${selectedSpace}` : ''
-      }`
-    )
+  const goToEditPage = useCallback(
+    (id: string) =>
+      push(
+        `/${EDIT_SITUATION_PAGE_ROUTE}?id=${id}${
+          selectedSpace ? `&space=${selectedSpace}` : ''
+        }`
+      ),
+    [push, selectedSpace]
+  )
 
-  const goToConnectionPage = () => push(`/${CONNECTION_CONFIG_ROUTE}`)
+  const goToConnectionPage = useCallback(
+    () =>
+      push(
+        `/${CONNECTION_CONFIG_ROUTE}?space=${selectedSpace ?? DEFAULT_SPACE}`
+      ),
+    [push, selectedSpace]
+  )
 
-  const goToHelpPage = () => push(`/${HELP_PAGE_ROUTE}`)
+  const goToHelpPage = useCallback(() => push(`/${HELP_PAGE_ROUTE}`), [push])
+
+  const goToCustomization = useCallback(() => {
+    push(`/${CUSTOMIZATION_PAGE_ROUTE}?space=${selectedSpace ?? DEFAULT_SPACE}`)
+  }, [push, selectedSpace])
 
   const addNewSituation = () =>
     push(
@@ -194,13 +208,9 @@ export const Space: React.FC = () => {
           getSituationJson={getSituationJson}
           globalVariables={space?.variables}
           controlsColapse={colapses[`${situation.id}-controls`] ?? false}
-          toggleControlsColapse={() =>
-            toggle(`${situation.id}-controls`)
-          }
+          toggleControlsColapse={() => toggle(`${situation.id}-controls`)}
           variablesColapse={colapses[`${situation.id}-variables`] ?? false}
-          toggleVariablesColapse={() =>
-            toggle(`${situation.id}-variables`)
-          }
+          toggleVariablesColapse={() => toggle(`${situation.id}-variables`)}
         />
       )),
     [
@@ -226,6 +236,7 @@ export const Space: React.FC = () => {
             <MoreVert />
           </IconButton>
           <Menu open={isMenuOpen} anchorEl={menuAnchor} onClose={closeMenu}>
+            <MenuItem onClick={goToCustomization}>Customizar Espaço</MenuItem>
             <MenuItem onClick={goToHelpPage}>Ajuda</MenuItem>
           </Menu>
 
@@ -258,7 +269,11 @@ export const Space: React.FC = () => {
         </div>
 
         <div className="dice-box">
-          <Die isRolling={isDieRolling} result={dieResult} />
+          <Die
+            isRolling={isDieRolling}
+            color={space?.customization?.dieColor}
+            result={dieResult}
+          />
         </div>
         <p>{rollError ?? completeDieResult}</p>
         <Card className="expression-builder">
@@ -321,9 +336,7 @@ export const Space: React.FC = () => {
             updateOrInsert(selectedSpace, { variables })
           }}
           colapse={colapses[`${selectedSpace}-variables`] ?? false}
-          toggleColapse={() =>
-            toggle(`${selectedSpace}-variables`)
-          }
+          toggleColapse={() => toggle(`${selectedSpace}-variables`)}
         />
       </Column>
     </StyledSpace>
