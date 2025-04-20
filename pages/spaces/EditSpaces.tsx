@@ -124,7 +124,9 @@ export const EditSpacesPage: React.FC = () => {
           variables: exportModal.exportGlobalVariables
             ? space.variables
             : undefined,
-          // customizations: exportModal.exportCustomizations ? space.customizations : undefined,
+          customization: exportModal.exportCustomizations
+            ? space.customization
+            : undefined,
         },
       },
       null,
@@ -193,7 +195,7 @@ export const EditSpacesPage: React.FC = () => {
     const space = spacesObject[importModal.spaceName]
     const importingSituations = importModal.importingContent.situations
     const importingVariables = importModal.importingContent.variables
-    // const importingCustomizations = importModal.importingContent.customizations
+    const importingCustomizations = importModal.importingContent.customization
 
     updateOrInsert(importModal.spaceName, {
       ...space,
@@ -217,7 +219,7 @@ export const EditSpacesPage: React.FC = () => {
             ...importingVariables,
           ]
         : space.variables,
-      // customizations: { ...space.customizations, ...importModal.importCustomizations }
+      customization: { ...space.customization, ...importingCustomizations },
     })
 
     setImportModal({
