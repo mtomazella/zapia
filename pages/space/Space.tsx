@@ -128,10 +128,34 @@ export const Space: React.FC = () => {
     [expressionText, sendRoll, spaceConnection, roll]
   )
 
-  const rollOneShot = useCallback(
-    () => rollHandler(oneShotExpression, { situation: null }),
-    [rollHandler, oneShotExpression]
-  )
+  const rollOneShot = useCallback(() => {
+    if (!isNaN(Number(oneShotExpression.trim()))) {
+      return rollHandler(`1d20 + ${oneShotExpression.trim()}`, {
+        situation: null,
+      })
+    } else if (
+      (() => {
+        const parts = oneShotExpression
+          .trim()
+          .split(',')
+          .map(s => s.trim())
+        return parts.length === 2 && parts.every(part => !isNaN(Number(part)))
+      })()
+    ) {
+      const parts = oneShotExpression
+        .trim()
+        .split(',')
+        .map(s => s.trim())
+      return rollHandler(`${parts[0]}d20k1cs + ${parts[1]}`, {
+        situation: null,
+      })
+    }
+
+    return rollHandler(
+      !isNaN(Number(oneShotExpression)) ? `1d20` : oneShotExpression,
+      { situation: null }
+    )
+  }, [rollHandler, oneShotExpression])
 
   const situations = useMemo(
     () =>
