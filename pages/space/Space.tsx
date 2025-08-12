@@ -129,11 +129,17 @@ export const Space: React.FC = () => {
   )
 
   const rollOneShot = useCallback(() => {
+    if (!oneShotExpression || oneShotExpression.trim() === '') {
+      return rollHandler('1d20cs', { situation: null })
+    }
+    
     if (!isNaN(Number(oneShotExpression.trim()))) {
       return rollHandler(`1d20cs + ${oneShotExpression.trim()}`, {
         situation: null,
       })
-    } else if (
+    }
+    
+    if (
       (() => {
         const parts = oneShotExpression
           .trim()
@@ -152,7 +158,7 @@ export const Space: React.FC = () => {
     }
 
     return rollHandler(
-      !isNaN(Number(oneShotExpression)) ? `1d20` : oneShotExpression,
+      oneShotExpression,
       { situation: null }
     )
   }, [rollHandler, oneShotExpression])
