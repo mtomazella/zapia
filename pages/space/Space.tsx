@@ -36,7 +36,7 @@ import {
   HELP_PAGE_ROUTE,
   SPACE_PAGE_ROUTE,
 } from 'shared/constants'
-import { TSituation } from 'shared/types'
+import { TSituation, TSpace } from 'shared/types'
 import { generateSearchParams } from 'utils/navigation'
 
 import { Die } from 'components'
@@ -48,6 +48,7 @@ import { useBot } from 'hooks/use-bot'
 import { useConnectionInfo } from 'hooks/use-connection'
 import { GlobalVariables } from 'components/GlobalVariables'
 import { useColapses } from 'hooks/use-colapses'
+import { StatusBars } from 'components/StatusBars'
 
 export const Space: React.FC = () => {
   const { push } = useRouter()
@@ -358,6 +359,36 @@ export const Space: React.FC = () => {
             size="small"
           />
         </Card>
+
+        <StatusBars
+          className="status-bars"
+          space={space}
+          bars={[
+            {
+              name: 'Vida',
+              max: '100 + [dex]',
+              value: 100,
+              color: 'red',
+            },
+            {
+              name: 'Mana',
+              max: '100',
+              value: 100,
+              color: 'blue',
+            },
+            {
+              name: 'Fome',
+              max: '100',
+              value: 0,
+              color: 'yellow',
+            },
+          ]}
+          onChange={statusBars => {
+            console.log(statusBars)
+          }}
+          colapse={colapses[`${selectedSpace}-status-bars`] ?? false}
+          toggleColapse={() => toggle(`${selectedSpace}-status-bars`)}
+        />
 
         <GlobalVariables
           className="global-variables"
