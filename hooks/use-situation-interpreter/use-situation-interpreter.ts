@@ -93,7 +93,7 @@ export const useSituationInterpreter = ({
         })
       })
 
-      return variableValue.toString()
+      return (variableValue ?? '').toString()
     },
     [variables, controls, globalVariables]
   )
@@ -106,7 +106,7 @@ export const useSituationInterpreter = ({
       for (const key of neededVariables) {
         const value = computeVariableValue(key)
 
-        if (!value) {
+        if (!value && value !== '') {
           setError(`Variável não encontrada (${key})`)
           return expr
         }
@@ -133,7 +133,7 @@ export const useSituationInterpreter = ({
     return result
   }, [variables, controls])
 
-  const preparedExpression = useMemo(() => {
+  const preparedExpression: Expression[] = useMemo(() => {
     setError(null)
 
     const treatedExpression = cleanExpression(expression)
@@ -149,22 +149,40 @@ export const useSituationInterpreter = ({
         }${value}`
     })
 
-    const duppedGroupedExpressions = controlledExpression
-      .split('{')
-      .map(groupExpression => {
-        groupExpression = groupExpression.replaceAll('}', '')
-        let [expression, group] = groupExpression.split(';')
+    let duppedGroupedExpressions: Expression[] = []
+    while (
+      controlledExpression.includes('{') &&
+      controlledExpression.includes('}')
+    ) {
+      const openingIndex = controlledExpression.indexOf('{') + 1
+      const closingIndex = controlledExpression.indexOf('}')
+      let [expression, group] = controlledExpression
+        .slice(openingIndex, closingIndex)
+        .split(';')
 
-        if (!expression || expression.trim() === '') return null
+      controlledExpression =
+        controlledExpression.slice(0, openingIndex - 1) +
+        controlledExpression.slice(closingIndex + 1)
 
-        group = (group ?? '').trim().toLowerCase()
+      if (!expression || expression.trim() === '') continue
 
-        return {
-          expression,
-          group: group === '' ? undefined : group,
-        }
+      group = (group ?? '').trim().toLowerCase()
+
+      duppedGroupedExpressions.push({
+        expression,
+        group: !group ? undefined : group,
       })
-      .filter(e => e !== null) as Expression[]
+    }
+
+    duppedGroupedExpressions = duppedGroupedExpressions.filter(
+      e => e !== null
+    ) as Expression[]
+
+    if (controlledExpression.replaceAll(' ', '').length) {
+      duppedGroupedExpressions.push({
+        expression: controlledExpression,
+      })
+    }
 
     const groupedExpressions: Expression[] = []
     duppedGroupedExpressions.forEach(({ expression, group }) => {
@@ -192,7 +210,7 @@ export const useSituationInterpreter = ({
     const builtExpressions = groupedExpressions.map(e => {
       const builtExpression = applyVariablesToExpression(e.expression)
       if (!validate(builtExpression)) {
-        setError(`Expressão inválida no grupo ${e.group}`)
+        setError(`Expressão inválida no grupo ${e.group ?? 'padrão'}`)
       }
       return {
         ...e,
@@ -200,7 +218,7 @@ export const useSituationInterpreter = ({
       }
     })
 
-    return builtExpressions
+    return builtExpressions as Expression[]
   }, [expression, controls, globalVariables])
 
   return {

@@ -53,7 +53,7 @@ export const useDieRoll = ({ duration = 1000 }: UseDieRollParams = {}) => {
       results.forEach(r => {
         let string = r.result.toString()
 
-        if (results.length !== 1 || r.group) {
+        if (r.group) {
           string = `${string.split(':')[0]} (${r.group}):${
             string.split(':')[1]
           }`
