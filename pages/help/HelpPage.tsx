@@ -176,7 +176,7 @@ export const HelpPage: React.FC = () => {
       {/* . */}
       <h2>Rolagem Única</h2>
       <p>Para testes ou rolagens únicas, use o primeiro campo.</p>
-      <Image src={singleUseRoll} />
+      <Image alt="" src={singleUseRoll} />
 
       {/* . */}
       <h2>Situações</h2>
@@ -185,7 +185,7 @@ export const HelpPage: React.FC = () => {
         praticidade. Além disso, também é possível adicionar variáveis e
         controles a situações.
       </p>
-      <Image src={situationImage} />
+      <Image alt="" src={situationImage} />
       <p>
         Para criar uma situação, aperte o botão com um simbolo "+" no campo para
         rolagens únicas. Se alguma expressão estiver escrita no campo, ela será

@@ -114,7 +114,7 @@ export const ConnectionPage: React.FC = () => {
             Canal" e salve as configurações. Seus resultados serão
             automaticamente enviados para aquele canal.
           </p>
-          <Image src={channelImage} />
+          <Image alt='' src={channelImage} />
         </div>
       </section>
 
