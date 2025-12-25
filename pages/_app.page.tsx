@@ -10,6 +10,7 @@ import { GlobalStyle } from 'style/global'
 import { AppPalette } from 'style/palette'
 
 import './../style/dice.scss'
+import dynamic from 'next/dynamic'
 
 const theme = createTheme({
   palette: {
@@ -37,4 +38,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   )
 }
 
-export default MyApp
+export default dynamic(() => Promise.resolve(MyApp), {
+  ssr: false,
+})

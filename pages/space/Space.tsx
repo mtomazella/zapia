@@ -19,6 +19,7 @@ import {
   Select,
 } from '@mui/material'
 import {
+  Expression,
   useDieRoll,
   useSituationInterpreter,
   useSituations,
@@ -85,7 +86,6 @@ export const Space: React.FC = () => {
 
   const {
     result: dieResult,
-    completeTotal: completeDieResult,
     isRolling: isDieRolling,
     roll,
     error: rollError,
@@ -109,14 +109,20 @@ export const Space: React.FC = () => {
   )
 
   const rollHandler = useCallback(
-    async (expression?: string, meta?: { situation?: TSituation | null }) => {
-      if (!expression) expression = expressionText
+    async (
+      expression?: Expression[] | string,
+      meta?: { situation?: TSituation | null }
+    ) => {
+      if (!expression || expression.length === 0)
+        expression = [{ expression: '1d20cs' }]
+      else if (typeof expression === 'string') expression = [{ expression }]
+
       scrollTo({ top: 0 })
 
       const rollResult = await roll(expression)
       const rollToSend = {
-        result: rollResult?.result?.total?.toString() ?? '',
-        detailedResult: rollResult?.result?.toString() ?? '',
+        result: (rollResult?.total ?? '').toString(),
+        detailedResult: rollResult?.stringResults.join('\n> '),
         space: selectedSpace,
         player: spaceConnection?.player,
         situation: meta?.situation?.name,
@@ -129,38 +135,36 @@ export const Space: React.FC = () => {
   )
 
   const rollOneShot = useCallback(() => {
-    if (!oneShotExpression || oneShotExpression.trim() === '') {
-      return rollHandler('1d20cs', { situation: null })
+    if (!oneShotExpression || oneShotExpression.length === 0) {
+      return rollHandler([{ expression: '1d20cs' }], { situation: null })
     }
-    
-    if (!isNaN(Number(oneShotExpression.trim()))) {
-      return rollHandler(`1d20cs + ${oneShotExpression.trim()}`, {
-        situation: null,
-      })
-    }
-    
-    if (
-      (() => {
-        const parts = oneShotExpression
+
+    if (oneShotExpression.length === 1) {
+      const expr = oneShotExpression[0].expression
+
+      if (!isNaN(Number(expr))) {
+        return rollHandler(`1d20cs + ${expr.trim()}`, {
+          situation: null,
+        })
+      }
+
+      if (
+        (() => {
+          const parts = expr.split(',').map(s => s.trim())
+          return parts.length === 2 && parts.every(part => !isNaN(Number(part)))
+        })()
+      ) {
+        const parts = expr
           .trim()
           .split(',')
           .map(s => s.trim())
-        return parts.length === 2 && parts.every(part => !isNaN(Number(part)))
-      })()
-    ) {
-      const parts = oneShotExpression
-        .trim()
-        .split(',')
-        .map(s => s.trim())
-      return rollHandler(`${parts[0]}d20k1cs + ${parts[1]}`, {
-        situation: null,
-      })
+        return rollHandler(`${parts[0]}d20k1cs + ${parts[1]}`, {
+          situation: null,
+        })
+      }
     }
 
-    return rollHandler(
-      oneShotExpression,
-      { situation: null }
-    )
+    return rollHandler(oneShotExpression, { situation: null })
   }, [rollHandler, oneShotExpression])
 
   const situations = useMemo(
@@ -302,10 +306,18 @@ export const Space: React.FC = () => {
           <Die
             isRolling={isDieRolling}
             color={space?.customization?.dieColor}
-            result={dieResult}
+            result={dieResult?.total}
           />
         </div>
-        <p>{rollError ?? completeDieResult}</p>
+
+        {rollError && <p className="error-text">{rollError}</p>}
+        {dieResult &&
+          dieResult.stringResults.map((res, index) => (
+            <p key={index} className="roll-result-text">
+              {res}
+            </p>
+          ))}
+
         <Card className="expression-builder">
           <CardContent>
             <ButtonTextField
