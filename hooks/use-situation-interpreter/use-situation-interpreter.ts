@@ -23,6 +23,42 @@ type Result = {
   computedVariables: Record<string, TComputedVariable>
 }
 
+export const extractExpressionGroups = (rawExpression: string) => {
+  let duppedGroupedExpressions: Expression[] = []
+  while (rawExpression.includes('{') && rawExpression.includes('}')) {
+    const openingIndex = rawExpression.indexOf('{') + 1
+    const closingIndex = rawExpression.indexOf('}')
+    let [expression, group] = rawExpression
+      .slice(openingIndex, closingIndex)
+      .split(';')
+
+    rawExpression =
+      rawExpression.slice(0, openingIndex - 1) +
+      rawExpression.slice(closingIndex + 1)
+
+    if (!expression || expression.trim() === '') continue
+
+    group = (group ?? '').trim().toLowerCase()
+
+    duppedGroupedExpressions.push({
+      expression,
+      group: !group ? undefined : group,
+    })
+  }
+
+  duppedGroupedExpressions = duppedGroupedExpressions.filter(
+    e => e !== null
+  ) as Expression[]
+
+  if (rawExpression.replaceAll(' ', '').length) {
+    duppedGroupedExpressions.push({
+      expression: rawExpression,
+    })
+  }
+
+  return duppedGroupedExpressions
+}
+
 export const useSituationInterpreter = ({
   situation,
   globalVariables,
@@ -149,40 +185,8 @@ export const useSituationInterpreter = ({
         }${value}`
     })
 
-    let duppedGroupedExpressions: Expression[] = []
-    while (
-      controlledExpression.includes('{') &&
-      controlledExpression.includes('}')
-    ) {
-      const openingIndex = controlledExpression.indexOf('{') + 1
-      const closingIndex = controlledExpression.indexOf('}')
-      let [expression, group] = controlledExpression
-        .slice(openingIndex, closingIndex)
-        .split(';')
-
-      controlledExpression =
-        controlledExpression.slice(0, openingIndex - 1) +
-        controlledExpression.slice(closingIndex + 1)
-
-      if (!expression || expression.trim() === '') continue
-
-      group = (group ?? '').trim().toLowerCase()
-
-      duppedGroupedExpressions.push({
-        expression,
-        group: !group ? undefined : group,
-      })
-    }
-
-    duppedGroupedExpressions = duppedGroupedExpressions.filter(
-      e => e !== null
-    ) as Expression[]
-
-    if (controlledExpression.replaceAll(' ', '').length) {
-      duppedGroupedExpressions.push({
-        expression: controlledExpression,
-      })
-    }
+    const duppedGroupedExpressions =
+      extractExpressionGroups(controlledExpression)
 
     const groupedExpressions: Expression[] = []
     duppedGroupedExpressions.forEach(({ expression, group }) => {
