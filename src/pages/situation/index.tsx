@@ -22,7 +22,7 @@ import {
   useSituations,
   useUrlParameters,
 } from 'hooks'
-import { ACTION_TYPE_DISPLAY_TEXT } from 'shared/constants'
+import { ACTION_TYPE_DISPLAY_TEXT, SPACE_PAGE_ROUTE } from 'shared/constants'
 import {
   TActionType,
   TSituationControl,
@@ -97,12 +97,7 @@ export const SituationPage: React.FC = () => {
   }, [situation])
 
   const back = () => {
-    push({
-      pathname: '/space',
-      query: {
-        space: spaceName,
-      },
-    })
+    push(`/${SPACE_PAGE_ROUTE}?space=${spaceName}`)
   }
 
   const onSubmit = (data: Form) => {

@@ -45,6 +45,8 @@ export const StyledCustomization = styled.main`
   }
 
   section.color {
+    margin-bottom: 5rem;
+
     > div {
       display: flex;
       flex-direction: row;

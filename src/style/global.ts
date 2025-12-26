@@ -9,6 +9,8 @@ export const GlobalStyle = createGlobalStyle`
     display: block;
     margin: 0 auto;
     padding: 0;
+    scrollbar-color: white transparent;
+    scrollbar-width: thin;
   }
 
   body{

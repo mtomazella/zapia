@@ -5,7 +5,8 @@ import { HelpPage } from './pages/help'
 import { ConnectionPage } from './pages/connection'
 import { CustomizationPage } from './pages/customization'
 import { SituationPage } from './pages/situation'
-import { OwlbearPopover } from './pages/owlbear-popover'
+import { OwlbearHistory } from './pages/owlbear-history'
+import { OwlbearBackgroundScript } from './pages/owlbear-background-script'
 
 export default function App() {
   return (
@@ -17,7 +18,11 @@ export default function App() {
       <Route path="/connection" element={<ConnectionPage />} />
       <Route path="/customization" element={<CustomizationPage />} />
       <Route path="/situation" element={<SituationPage />} />
-      <Route path="/owlbear-popover" element={<OwlbearPopover />} />
+      <Route path="/owlbear-history" element={<OwlbearHistory />} />
+      <Route
+        path="/owlbear-background-script"
+        element={<OwlbearBackgroundScript />}
+      />
 
       <Route path="*" element={<div>404 Not Found</div>} />
     </Routes>

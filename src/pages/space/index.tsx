@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 
 import { faDiceD20, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -92,7 +92,9 @@ export const Space: React.FC = () => {
   const { sendRoll: sendRollBot } = useBot({
     destinationKey: spaceConnection?.destinationKey ?? '',
   })
-  const { sendRoll: sendRollOwlbear } = useOwlbearIntegration()
+  const { sendRoll: sendRollOwlbear } = useOwlbearIntegration({
+    sendNotification: true,
+  })
 
   const addToExpression = (value: string) =>
     setExpressionText(
@@ -126,6 +128,7 @@ export const Space: React.FC = () => {
         player: spaceConnection?.player,
         situation: meta?.situation?.name,
         controls: meta?.situation?.controls?.filter(control => control.active),
+        dieColor: space?.customization.dieColor,
       }
 
       if (spaceConnection?.sendRolls) {
