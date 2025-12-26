@@ -6,7 +6,7 @@ import path from 'path'
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 8080,
+    port: process.env.PORT,
     cors: true,
   },
   resolve: {
@@ -18,6 +18,6 @@ export default defineConfig({
       style: path.resolve(__dirname, 'src/style/'),
       assets: path.resolve(__dirname, 'src/assets/'),
       shared: path.resolve(__dirname, 'src/shared/'),
-    }
-  }
+    },
+  },
 })
