@@ -26,6 +26,23 @@ export const StyledSituationPage = styled.form`
         margin: 1rem 0;
       }
 
+      > div.expression-field {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin: 1rem 0;
+        width: 100%;
+
+        .MuiFormControl-root {
+          width: 100%;
+
+          &.group {
+            max-width: 10rem;
+          }
+        }
+      }
+
       > div.control-field {
         display: flex;
         flex-direction: row;

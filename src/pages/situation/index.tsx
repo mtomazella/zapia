@@ -15,17 +15,32 @@ import {
   Select,
   TextField,
 } from '@mui/material'
-import { useSituations, useUrlParameters } from 'hooks'
 import { useNavigate } from 'react-router-dom'
+import {
+  Expression,
+  extractExpressionGroups,
+  useSituations,
+  useUrlParameters,
+} from 'hooks'
 import { ACTION_TYPE_DISPLAY_TEXT } from 'shared/constants'
-import { TActionType, TSituation } from 'shared/types'
+import {
+  TActionType,
+  TSituationControl,
+  TSituationVariable,
+} from 'shared/types'
 
 import { Die } from 'components'
 
 import { StyledSituationPage } from './SituationPage.styled'
 import { SituationValidationError, validateSituation } from 'utils/clipboard'
 
-type Form = TSituation
+type Form = {
+  id: string
+  name: string
+  expressions: Expression[]
+  variables?: TSituationVariable[] | undefined
+  controls?: TSituationControl[] | undefined
+}
 
 export const SituationPage: React.FC = () => {
   const push = useNavigate()
@@ -46,6 +61,14 @@ export const SituationPage: React.FC = () => {
   })
   const { control, register, reset, handleSubmit } = useForm<Form>()
   const {
+    fields: expressionFields,
+    append: appendExpression,
+    remove: removeExpression,
+  } = useFieldArray({
+    name: 'expressions',
+    control,
+  })
+  const {
     fields: controlFields,
     append: appendControl,
     remove: removeControl,
@@ -65,7 +88,9 @@ export const SituationPage: React.FC = () => {
   useEffect(() => {
     reset({
       name: situation?.name ?? '',
-      expression: situation?.expression ?? initialExpression ?? '1d20',
+      expressions: extractExpressionGroups(
+        situation?.expression ?? initialExpression ?? '1d20'
+      ),
       controls: situation?.controls ?? [],
       variables: situation?.variables ?? [],
     })
@@ -81,7 +106,18 @@ export const SituationPage: React.FC = () => {
   }
 
   const onSubmit = (data: Form) => {
-    updateById({ ...(situation as TSituation), ...data })
+    const updatedSituation = {
+      ...situation,
+    }
+
+    updatedSituation.name = data.name
+
+    updatedSituation.expression = data.expressions
+      .filter(e => !!(e.expression ?? '').trim())
+      .map(e => `{${e.expression.trim()};${e.group?.trim()}}`)
+      .join('')
+
+    updateById(updatedSituation)
     back()
   }
 
@@ -126,11 +162,39 @@ export const SituationPage: React.FC = () => {
             InputLabelProps={{ shrink: true }}
             {...register('name')}
           />
-          <TextField
-            label="Expressão"
-            InputLabelProps={{ shrink: true }}
-            {...register('expression')}
-          />
+
+          <div className="section-title">
+            <h3>Expressão</h3>
+            <IconButton
+              onClick={() =>
+                appendExpression({
+                  expression: '',
+                  group: '',
+                })
+              }
+            >
+              <FontAwesomeIcon icon={faAdd} />
+            </IconButton>
+          </div>
+          {expressionFields.map(({ expression, group }, index) => {
+            return (
+              <div className="expression-field" key={index}>
+                <TextField
+                  placeholder="Expressão"
+                  {...register(`expressions.${index}.expression`)}
+                />
+                <TextField
+                  placeholder="Grupo/Tipo"
+                  className="group"
+                  {...register(`expressions.${index}.group`)}
+                />
+                <IconButton onClick={() => removeExpression(index)}>
+                  <FontAwesomeIcon icon={faRemove} />
+                </IconButton>
+              </div>
+            )
+          })}
+
           <div className="section-title">
             <h3>Controles</h3>
             <IconButton

@@ -11,11 +11,52 @@ export type TComputedVariable = {
   computedValue: string
 }
 
-type Result = {
+export type Expression = {
   expression: string
-  displayExpression: string
+  group?: string
+}
+
+type Result = {
+  expression: Expression[]
+  displayExpression: Expression[]
   error: string | null
   computedVariables: Record<string, TComputedVariable>
+}
+
+export const extractExpressionGroups = (rawExpression: string) => {
+  let duppedGroupedExpressions: Expression[] = []
+  while (rawExpression.includes('{') && rawExpression.includes('}')) {
+    const openingIndex = rawExpression.indexOf('{') + 1
+    const closingIndex = rawExpression.indexOf('}')
+    let [expression, group] = rawExpression
+      .slice(openingIndex, closingIndex)
+      .split(';')
+
+    rawExpression =
+      rawExpression.slice(0, openingIndex - 1) +
+      rawExpression.slice(closingIndex + 1)
+
+    if (!expression || expression.trim() === '') continue
+
+    group = (group ?? '').trim().toLowerCase()
+
+    duppedGroupedExpressions.push({
+      expression,
+      group: !group ? undefined : group,
+    })
+  }
+
+  duppedGroupedExpressions = duppedGroupedExpressions.filter(
+    e => e !== null
+  ) as Expression[]
+
+  if (rawExpression.replaceAll(' ', '').length) {
+    duppedGroupedExpressions.push({
+      expression: rawExpression,
+    })
+  }
+
+  return duppedGroupedExpressions
 }
 
 export const useSituationInterpreter = ({
@@ -28,7 +69,7 @@ export const useSituationInterpreter = ({
   const { expression, variables, controls } = situation ?? {}
 
   const [error, setError] = useState<string | null>(null)
-  const [displayExpression, setDisplayExpression] = useState('')
+  const [displayExpression, setDisplayExpression] = useState<Expression[]>([])
 
   const cleanExpression = (expr: string) => (expr ?? '').replaceAll(' ', '')
 
@@ -88,7 +129,7 @@ export const useSituationInterpreter = ({
         })
       })
 
-      return variableValue.toString()
+      return (variableValue ?? '').toString()
     },
     [variables, controls, globalVariables]
   )
@@ -101,7 +142,7 @@ export const useSituationInterpreter = ({
       for (const key of neededVariables) {
         const value = computeVariableValue(key)
 
-        if (!value) {
+        if (!value && value !== '') {
           setError(`Variável não encontrada (${key})`)
           return expr
         }
@@ -128,7 +169,7 @@ export const useSituationInterpreter = ({
     return result
   }, [variables, controls])
 
-  const preparedExpression = useMemo(() => {
+  const preparedExpression: Expression[] = useMemo(() => {
     setError(null)
 
     const treatedExpression = cleanExpression(expression)
@@ -140,19 +181,48 @@ export const useSituationInterpreter = ({
       if (actionType === 'substitute') controlledExpression = value
       else if (actionType === 'add')
         controlledExpression += `${
-          value.charAt(0) === '+' || value.charAt(0) === '-' ? '' : '+'
+          ['+', '-', '{'].includes(value.charAt(0)) ? '' : '+'
         }${value}`
     })
-    setDisplayExpression(controlledExpression)
 
-    const builtExpression = applyVariablesToExpression(controlledExpression)
+    const duppedGroupedExpressions =
+      extractExpressionGroups(controlledExpression)
 
-    if (!validate(builtExpression)) {
-      setError('Expressão inválida')
-      return expression
-    }
+    const groupedExpressions: Expression[] = []
+    duppedGroupedExpressions.forEach(({ expression, group }) => {
+      const alreadyMapped = groupedExpressions.findIndex(
+        ge => ge.group === group
+      )
 
-    return builtExpression
+      if (alreadyMapped === -1) {
+        groupedExpressions.push({ group, expression })
+      } else {
+        groupedExpressions[alreadyMapped] = {
+          group,
+          expression: `${groupedExpressions[alreadyMapped]?.expression}${
+            ['+', '-'].includes(expression.charAt(0)) &&
+            expression.trim().length
+              ? ''
+              : '+'
+          }${expression}`,
+        }
+      }
+    })
+
+    setDisplayExpression(groupedExpressions)
+
+    const builtExpressions = groupedExpressions.map(e => {
+      const builtExpression = applyVariablesToExpression(e.expression).trim()
+      if (!validate(builtExpression)) {
+        setError(`Expressão inválida no grupo ${e.group ?? 'padrão'}`)
+      }
+      return {
+        ...e,
+        expression: builtExpression,
+      }
+    })
+
+    return builtExpressions as Expression[]
   }, [expression, controls, globalVariables])
 
   return {

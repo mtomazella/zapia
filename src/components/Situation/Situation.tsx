@@ -28,7 +28,7 @@ import {
   Tooltip,
 } from '@mui/material'
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state'
-import { useSituationInterpreter } from 'hooks'
+import { Expression, useSituationInterpreter } from 'hooks'
 import { isEmpty } from 'lodash'
 import { ACTION_TYPE_COLORS, ACTION_TYPE_DISPLAY_TEXT } from 'shared/constants'
 import { TSituation, TSpaceVariable } from 'shared/types'
@@ -44,7 +44,7 @@ import {
 
 type TSituationComponent = {
   situation: TSituation
-  roll: (expression: string) => void
+  roll: (expression: Expression[]) => void
   save: (situation: TSituation) => void
   edit: (id: string) => void
   deleteFn: (id: string) => void
@@ -109,7 +109,12 @@ export const Situation: React.FC<TSituationComponent> = ({
         <Row>
           <div>
             <h3>{name}</h3>
-            <h4>{displayExpression}</h4>
+            {displayExpression.map((de, index) => (
+              <h4 key={index}>
+                {de.expression}
+                {de.group ? ` (${de.group})` : ''}
+              </h4>
+            ))}
           </div>
           <div>
             <IconButton onClick={rollCurrentExpression}>
@@ -127,7 +132,10 @@ export const Situation: React.FC<TSituationComponent> = ({
       </CardContent>
       <CardContent>
         {!!controls && controls.length > 0 && (
-          <Accordion expanded={controlsColapse} onChange={toggleControlsColapse}>
+          <Accordion
+            expanded={controlsColapse}
+            onChange={toggleControlsColapse}
+          >
             <AccordionSummary>
               <Settings
                 fontSize="small"
@@ -159,7 +167,10 @@ export const Situation: React.FC<TSituationComponent> = ({
           </Accordion>
         )}
         {!!variables && !isEmpty(variables) && (
-          <Accordion expanded={variablesColapse} onChange={toggleVariablesColapse}>
+          <Accordion
+            expanded={variablesColapse}
+            onChange={toggleVariablesColapse}
+          >
             <AccordionSummary>
               <DataArray
                 fontSize="small"
@@ -234,18 +245,15 @@ export const Situation: React.FC<TSituationComponent> = ({
         </Tooltip>
       </CardActions>
 
-      <Dialog
-        open={deleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
-      >
-        <DialogTitle id="alert-dialog-title">Tem certeza que deseja deletar essa Situação?</DialogTitle>
+      <Dialog open={deleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
+        <DialogTitle id="alert-dialog-title">
+          Tem certeza que deseja deletar essa Situação?
+        </DialogTitle>
         <DialogActions>
           <Button onClick={() => setDeleteModalOpen(false)} autoFocus>
             Não deletar
           </Button>
-          <Button onClick={onDelete}>
-            Deletar
-          </Button>
+          <Button onClick={onDelete}>Deletar</Button>
         </DialogActions>
       </Dialog>
     </StyledSituation>
