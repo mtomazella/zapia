@@ -9,5 +9,5 @@
     "height": 600,
     "width": 400
   },
-  "background_url": "http://localhost:8080/owlbear-background-script"
+  "background_url": "https://zapia.vercel.app/owlbear-background-script"
 }
