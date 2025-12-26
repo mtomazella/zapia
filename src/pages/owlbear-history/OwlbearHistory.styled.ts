@@ -40,10 +40,23 @@ export const StyledOwlbearHistoryOpen = styled.main`
         font-size: 1.2rem;
       }
 
-      > h3 {
+      h3 {
         margin: 0.5rem 0;
         color: ${AppPalette.gray[12]};
         font-size: 1rem;
+      }
+
+      > div.player {
+        display: flex;
+        flex-direction: row;
+
+        > h3 {
+          margin: 0.5rem 0 0 0;
+        }
+
+        > .player {
+          margin-right: 0.3rem;
+        }
       }
 
       div.dice {

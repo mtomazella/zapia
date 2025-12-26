@@ -24,13 +24,15 @@ export const OwlbearHistory: React.FC = () => {
         {history.map(roll => {
           return (
             <Card className="roll">
-              <h3
-                className="player"
-                style={{ color: roll.owlbearPlayer.color }}
-              >
-                {roll.player ?? roll.owlbearPlayer.name}
-              </h3>
-              <h3 className="space">{roll.space ?? ''}</h3>
+              <div className="player">
+                <h3
+                  className="player"
+                  style={{ color: roll.owlbearPlayer.color }}
+                >
+                  {roll.player ?? roll.owlbearPlayer.name}
+                </h3>
+                {roll.space && <h3 className="space">- {roll.space ?? ''}</h3>}
+              </div>
               <h2>{roll.situation}</h2>
               <h3 className="details">{roll.detailedResult}</h3>
               <Die
