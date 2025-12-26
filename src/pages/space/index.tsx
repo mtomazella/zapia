@@ -45,8 +45,7 @@ import { useBot } from 'hooks/use-bot'
 import { useConnectionInfo } from 'hooks/use-connection'
 import { GlobalVariables } from 'components/GlobalVariables'
 import { useColapses } from 'hooks/use-colapses'
-
-import OBR from '@owlbear-rodeo/sdk'
+import { useOwlbearIntegration } from 'hooks/use-owlbear-integration'
 
 export const Space: React.FC = () => {
   const push = useNavigate()
@@ -90,9 +89,10 @@ export const Space: React.FC = () => {
     error: rollError,
   } = useDieRoll()
 
-  const { sendRoll } = useBot({
+  const { sendRoll: sendRollBot } = useBot({
     destinationKey: spaceConnection?.destinationKey ?? '',
   })
+  const { sendRoll: sendRollOwlbear } = useOwlbearIntegration()
 
   const retryMessage = (event: any) => {
     window.removeEventListener('message', retryMessage)
@@ -132,18 +132,12 @@ export const Space: React.FC = () => {
         controls: meta?.situation?.controls?.filter(control => control.active),
       }
 
-      if (spaceConnection?.sendRolls) sendRoll(rollToSend)
-
-      OBR.notification.show('Test')
-      OBR.popover.open({
-        id: "rodeo.owlbear.example/popover",
-        url: "/popover",
-        height: 80,
-        width: 200,
-        anchorElementId: 'root',
-      });
+      if (spaceConnection?.sendRolls) {
+        sendRollBot(rollToSend)
+        await sendRollOwlbear(rollToSend)
+      }
     },
-    [expressionText, sendRoll, spaceConnection, roll]
+    [expressionText, sendRollBot, spaceConnection, roll]
   )
 
   const rollOneShot = useCallback(() => {
