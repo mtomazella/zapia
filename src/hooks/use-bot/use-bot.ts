@@ -17,8 +17,7 @@ export const useBot = ({ destinationKey }: UseBotParams) => {
   const sendRoll = useCallback(
     (roll: BotRoll) => {
       fetch(
-        process.env.NEXT_PUBLIC_SEND_ROLL_API_URL ??
-          ('https://2rzemgne5ldr6ewxvemwzfmwhu0weliz.lambda-url.sa-east-1.on.aws/' as string),
+        'https://2rzemgne5ldr6ewxvemwzfmwhu0weliz.lambda-url.sa-east-1.on.aws/',
         {
           method: 'POST',
           body: JSON.stringify({ destinationKey, ...roll }),

@@ -16,7 +16,7 @@ export const useConnectionInfo = ({
 
   const updateSpaceConnection = () => {
     const connections = getConnections()
-    const connection = connections?.[spaceName ?? '']
+    const connection = connections?.[spaceName ?? 'default']
     setSpaceConnection(connection)
   }
 

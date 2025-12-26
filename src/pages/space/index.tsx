@@ -94,16 +94,6 @@ export const Space: React.FC = () => {
   })
   const { sendRoll: sendRollOwlbear } = useOwlbearIntegration()
 
-  const retryMessage = (event: any) => {
-    window.removeEventListener('message', retryMessage)
-    for (let i = 0; i < 5; i++) {
-      setTimeout(() => {
-        console.log('Attempting to resend the message')
-        window.dispatchEvent(event)
-      }, 500 + i * 1000)
-    }
-  }
-
   const addToExpression = (value: string) =>
     setExpressionText(
       prev =>

@@ -5,7 +5,7 @@ import { v4 } from 'uuid'
 export type RollBroadcastData = {
   id: string
   result: string
-  detailedResult: string
+  detailedResult?: string
   space?: string
   player?: string
   situation?: string
@@ -24,7 +24,6 @@ export const useOwlbearIntegration = ({
   const sendRoll = async (
     data: Omit<RollBroadcastData, 'id' | 'owlbearPlayer'>
   ) => {
-    console.log(data)
     OBR.broadcast.sendMessage(
       'zapia-roll',
       {
@@ -45,11 +44,9 @@ export const useOwlbearIntegration = ({
       }: {
         data: RollBroadcastData
       }) => {
-        console.log(data)
-
         OBR.notification.show(
-          `${data.player ?? data.owlbearPlayer.name} | ${
-            data.situation ?? ''
+          `${data.player ?? data.owlbearPlayer.name} ${
+            data.situation ? `| ${data.situation}` : ''
           } ${
             data.controls?.length
               ? `(${data.controls.map(c => c.name).join(', ')})`

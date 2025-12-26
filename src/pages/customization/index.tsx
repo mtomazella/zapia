@@ -35,10 +35,7 @@ export const CustomizationPage = ({}) => {
     }
   }, [])
 
-  useEffect(() => {
-    console.log('customization', customization)
-    console.log(Object.keys(DIE_COLORS))
-  }, [customization])
+  useEffect(() => {}, [customization])
 
   const back = useCallback(() => {
     push(`/${SPACE_PAGE_ROUTE}?space=${spaceName}`)
