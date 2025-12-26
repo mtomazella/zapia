@@ -208,7 +208,7 @@ export const useSituationInterpreter = ({
     setDisplayExpression(groupedExpressions)
 
     const builtExpressions = groupedExpressions.map(e => {
-      const builtExpression = applyVariablesToExpression(e.expression)
+      const builtExpression = applyVariablesToExpression(e.expression).trim()
       if (!validate(builtExpression)) {
         setError(`Expressão inválida no grupo ${e.group ?? 'padrão'}`)
       }
