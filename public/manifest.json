@@ -4,7 +4,7 @@
   "manifest_version": 1,
   "action": {
     "title": "Zapia",
-    "icon": "/zapia-icon.png",
+    "icon": "/twenty-sided-dice.svg",
     "popover": "/",
     "height": 600,
     "width": 400

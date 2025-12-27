@@ -73,6 +73,14 @@ export const StyledOwlbearHistoryOpen = styled.main`
       bottom: 3px;
       background-color: ${AppPalette.neutral.black};
       width: ${historyWidthOpen - 32}px;
+
+      > img {
+        height: 23px;
+        aspect-ratio: 1;
+        margin-left: 0.5rem;
+        position: absolute;
+        left: 10px;
+      }
     }
   }
 `
@@ -90,5 +98,13 @@ export const StyledOwlbearHistoryClosed = styled.main`
 
   .MuiButtonBase-root {
     width: 100%;
+
+    > img {
+      height: 23px;
+      aspect-ratio: 1;
+      margin-left: 0.5rem;
+      position: absolute;
+      left: 10px;
+    }
   }
 `

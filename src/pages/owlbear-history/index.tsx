@@ -5,6 +5,7 @@ import {
 } from './OwlbearHistory.styled'
 import { useOwlbearIntegration } from 'hooks/use-owlbear-integration'
 import { Die } from 'components'
+import zapiaIcon from './assets/zapia-icon.png'
 
 export const OwlbearHistory: React.FC = () => {
   const { history, isHistoryOpen, toggleHistory } = useOwlbearIntegration()
@@ -13,7 +14,7 @@ export const OwlbearHistory: React.FC = () => {
     return (
       <StyledOwlbearHistoryClosed>
         <Button variant="outlined" onClick={toggleHistory}>
-          Histórico Zapia
+          <img src={zapiaIcon} /> Histórico
         </Button>
       </StyledOwlbearHistoryClosed>
     )
@@ -31,7 +32,9 @@ export const OwlbearHistory: React.FC = () => {
                 >
                   {roll.player ?? roll.owlbearPlayer.name}
                 </h3>
-                {roll.space && <h3 className="space">- {roll.space ?? ''}</h3>}
+                {roll.space && roll.space !== '' && roll.space !== 'Padrão' && (
+                  <h3 className="space">- {roll.space ?? ''}</h3>
+                )}
               </div>
               <h2>{roll.situation}</h2>
               <h3 className="details">{roll.detailedResult}</h3>
@@ -45,6 +48,7 @@ export const OwlbearHistory: React.FC = () => {
         })}
 
         <Button variant="outlined" onClick={toggleHistory}>
+          <img src={zapiaIcon} />
           Minimizar
         </Button>
       </section>
