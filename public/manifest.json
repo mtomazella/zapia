@@ -2,6 +2,9 @@
   "name": "Zapia",
   "version": "1.0.0",
   "manifest_version": 1,
+  "author": "mtmzll",
+  "description": "Um sistema de rolagem de dados com ferramentas para a criação de situações complexas.",
+  "icon": "/zapia-icon.png",
   "action": {
     "title": "Zapia",
     "icon": "/twenty-sided-dice.svg",
@@ -9,5 +12,15 @@
     "height": 600,
     "width": 400
   },
-  "background_url": "https://zapia.vercel.app/owlbear-background-script"
+  "background_url": "https://zapia.vercel.app/owlbear-background-script",
+  "permissions": [
+    {
+      "name": "clipboard-write",
+      "reason": "Exporting spaces"
+    },
+    {
+      "name": "clipboard-read",
+      "reason": "Importing spaces"
+    }
+  ]
 }

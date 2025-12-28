@@ -103,14 +103,14 @@ export const SituationPage: React.FC = () => {
   const onSubmit = (data: Form) => {
     const updatedSituation = {
       ...situation,
+      name: data.name,
+      expression: data.expressions
+        .filter(e => !!(e.expression ?? '').trim())
+        .map(e => `{${e.expression.trim()};${e.group?.trim()}}`)
+        .join(''),
+      controls: data.controls,
+      variables: data.variables,
     }
-
-    updatedSituation.name = data.name
-
-    updatedSituation.expression = data.expressions
-      .filter(e => !!(e.expression ?? '').trim())
-      .map(e => `{${e.expression.trim()};${e.group?.trim()}}`)
-      .join('')
 
     updateById(updatedSituation)
     back()
@@ -171,7 +171,7 @@ export const SituationPage: React.FC = () => {
               <FontAwesomeIcon icon={faAdd} />
             </IconButton>
           </div>
-          {expressionFields.map(({ expression, group }, index) => {
+          {expressionFields.map((_, index) => {
             return (
               <div className="expression-field" key={index}>
                 <TextField
