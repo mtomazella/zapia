@@ -278,18 +278,6 @@ export const Space: React.FC = () => {
           <Menu open={isMenuOpen} anchorEl={menuAnchor} onClose={closeMenu}>
             <MenuItem onClick={goToCustomization}>Customizar Espaço</MenuItem>
             <MenuItem onClick={goToHelpPage}>Ajuda</MenuItem>
-            <MenuItem
-              onClick={() => {
-                window.open(
-                  `${(import.meta as any).env.BASE_URL}?space=${
-                    selectedSpace ?? DEFAULT_SPACE
-                  }`,
-                  '_blank'
-                )
-              }}
-            >
-              Detach
-            </MenuItem>
           </Menu>
 
           <Select size="small" value={selectedSpace ?? DEFAULT_SPACE}>
