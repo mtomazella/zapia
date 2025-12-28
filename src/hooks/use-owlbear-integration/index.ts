@@ -5,7 +5,7 @@ import { v4 } from 'uuid'
 export type RollBroadcastData = {
   id: string
   result: string
-  detailedResult?: string
+  detailedResult?: string[]
   space?: string
   player?: string
   situation?: string
@@ -24,11 +24,7 @@ export const historyWidthClosed = 300
 export const historyHeightOpen = 500
 export const historyWidthOpen = 300
 
-export const useOwlbearIntegration = ({
-  sendNotification,
-}: {
-  sendNotification?: boolean
-} = {}) => {
+export const useOwlbearIntegration = () => {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false)
   const [rawHistory, setHistory] = useState<RollBroadcastData[]>([])
 
@@ -40,6 +36,39 @@ export const useOwlbearIntegration = ({
       }, []),
     [rawHistory]
   )
+
+  const isHistoryPopoverOpen = async () => {
+    try {
+      await OBR.popover.getHeight(historyPopoverId)
+      return true
+    } catch (error) {
+      return false
+    }
+  }
+
+  const initializeHistory = async () => {
+    if (await isHistoryPopoverOpen()) return
+
+    OBR.popover.open({
+      id: historyPopoverId,
+      url: `${(import.meta as any).env.BASE_URL}owlbear-history`,
+      height: historyHeightClosed,
+      width: historyWidthClosed,
+      disableClickAway: true,
+      anchorOrigin: {
+        horizontal: 'RIGHT',
+        vertical: 'BOTTOM',
+      },
+      anchorPosition: {
+        left: (await OBR.viewport.getWidth()) - 200,
+        top: await OBR.viewport.getHeight(),
+      },
+    })
+  }
+
+  const initializeHistoryOnReady = async () => {
+    OBR.onReady(initializeHistory)
+  }
 
   const addRoll = (message: RollBroadcastData) => {
     setHistory(history => [message].concat(history))
@@ -64,48 +93,16 @@ export const useOwlbearIntegration = ({
   }
 
   const onMessage = ({ data }: { data: RollBroadcastData }) => {
+    initializeHistory()
     if (rawHistory.find(h => h.id === data.id)) return
     addRoll(data)
-
-    // if (!sendNotification) return
-
-    // OBR.notification.show(
-    //   `${data.player ?? data.owlbearPlayer.name} ${
-    //     data.situation ? `| ${data.situation}` : ''
-    //   } ${
-    //     data.controls?.length
-    //       ? `(${data.controls.map(c => c.name).join(', ')})`
-    //       : ''
-    //   } = ${data.result}`
-    // )
   }
 
   useEffect(() => {
     OBR.onReady(() => {
       OBR.broadcast.onMessage('zapia-roll', onMessage as (event: any) => void)
     })
-  }, [window])
-
-  const initializeHistory = async () => {
-    OBR.onReady(async () => {
-      console.log('aaa')
-      OBR.popover.open({
-        id: historyPopoverId,
-        url: `${(import.meta as any).env.BASE_URL}owlbear-history`,
-        height: historyHeightClosed,
-        width: historyWidthClosed,
-        disableClickAway: true,
-        anchorOrigin: {
-          horizontal: 'RIGHT',
-          vertical: 'BOTTOM',
-        },
-        anchorPosition: {
-          left: (await OBR.viewport.getWidth()) - 200,
-          top: await OBR.viewport.getHeight(),
-        },
-      })
-    })
-  }
+  }, [])
 
   const toggleHistory = useCallback(async () => {
     const isOpen = !isHistoryOpen
@@ -125,6 +122,7 @@ export const useOwlbearIntegration = ({
     history,
     sendRoll,
     initializeHistory,
+    initializeHistoryOnReady,
     isHistoryOpen,
     toggleHistory,
   }

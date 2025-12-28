@@ -92,9 +92,7 @@ export const Space: React.FC = () => {
   const { sendRoll: sendRollBot } = useBot({
     destinationKey: spaceConnection?.destinationKey ?? '',
   })
-  const { sendRoll: sendRollOwlbear } = useOwlbearIntegration({
-    sendNotification: true,
-  })
+  const { sendRoll: sendRollOwlbear } = useOwlbearIntegration()
 
   const addToExpression = (value: string) =>
     setExpressionText(
@@ -118,12 +116,12 @@ export const Space: React.FC = () => {
         expression = [{ expression: '1d20cs' }]
       else if (typeof expression === 'string') expression = [{ expression }]
 
-      scrollTo({ top: 0 })
+      // scrollTo({ top: 0 })
 
       const rollResult = await roll(expression)
       const rollToSend = {
         result: (rollResult?.total ?? '').toString(),
-        detailedResult: rollResult?.stringResults.join('\n> '),
+        detailedResult: rollResult?.stringResults,
         space: selectedSpace,
         player: spaceConnection?.player,
         situation: meta?.situation?.name,
@@ -132,7 +130,10 @@ export const Space: React.FC = () => {
       }
 
       if (spaceConnection?.sendRolls) {
-        sendRollBot(rollToSend)
+        sendRollBot({
+          ...rollToSend,
+          detailedResult: rollToSend?.detailedResult?.join('\n> '),
+        })
         await sendRollOwlbear(rollToSend)
       }
     },
@@ -280,7 +281,7 @@ export const Space: React.FC = () => {
             <MenuItem
               onClick={() => {
                 window.open(
-                  `https://zapia.vercel.app?space=${
+                  `${(import.meta as any).env.BASE_URL}?space=${
                     selectedSpace ?? DEFAULT_SPACE
                   }`,
                   '_blank'

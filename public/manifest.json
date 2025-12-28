@@ -9,8 +9,8 @@
     "title": "Zapia",
     "icon": "/twenty-sided-dice.svg",
     "popover": "/",
-    "height": 600,
-    "width": 400
+    "height": 800,
+    "width": 600
   },
   "background_url": "https://zapia.vercel.app/owlbear-background-script",
   "permissions": [

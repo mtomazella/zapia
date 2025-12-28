@@ -37,7 +37,11 @@ export const OwlbearHistory: React.FC = () => {
                 )}
               </div>
               <h2>{roll.situation}</h2>
-              <h3 className="details">{roll.detailedResult}</h3>
+              <h3 className="details">
+                {roll.detailedResult?.map(result => (
+                  <p>{result}</p>
+                ))}
+              </h3>
               <Die
                 isRolling={false}
                 result={roll.result}
