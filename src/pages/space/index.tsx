@@ -398,7 +398,7 @@ export const Space: React.FC = () => {
               name: 'Fome',
               max: '100',
               value: 0,
-              color: 'yellow',
+              color: 'orange',
             },
           ]}
           onChange={statusBars => {

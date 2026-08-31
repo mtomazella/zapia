@@ -5,14 +5,14 @@ import {
   Button,
   TextField,
 } from '@mui/material'
-import { Clear, Add, Check } from '@mui/icons-material'
+import { Add } from '@mui/icons-material'
 import { StyledVariables, BarContainer, StyledBar } from './StatusBars.styled'
 import { TSpace, TSpaceStatusBar } from 'shared/types'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { AppPalette } from 'style/palette'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGear } from '@fortawesome/free-solid-svg-icons'
-import { useDieRoll, useSituationInterpreter } from 'hooks'
+import { Parser } from 'expr-eval'
 
 export type StatusBarsProps = {
   className?: string
@@ -93,24 +93,15 @@ const Bar = ({
   space?: TSpace
 }) => {
   const [editMode, setEditMode] = useState(false)
-  const { roll } = useDieRoll()
-  const [computedMax, setComputedMax] = useState(0)
-  const { expression: partialMax } = useSituationInterpreter({
-    situation: {
-      id: name,
-      name,
-      controls: [],
-      variables: [],
-      expression: max,
-    },
-    globalVariables: space?.variables ?? [],
-  })
 
-  useEffect(() => {
-    new Promise<number>(async resolve => {
-      resolve((await roll(partialMax))?.result?.total ?? 0)
-    }).then(setComputedMax)
-  }, [partialMax, roll])
+  const computedMax = useMemo(() => {
+    const variables = space?.variables.reduce((acc, variable) => {
+      acc[variable.key] = Number(variable.value)
+      return acc
+    }, {} as Record<string, number>)
+
+    return Parser.evaluate(max, variables)
+  }, [max, space?.variables])
 
   const handleChange = useCallback(
     (field: keyof TSpaceStatusBar, newValue: string | number) => {
@@ -133,7 +124,7 @@ const Bar = ({
             <FontAwesomeIcon icon={faGear} color="white" />
           </Button>
         </div>
-        {editMode ? (
+        {!editMode ? (
           <div
             className="bar"
             style={{ backgroundColor: color ?? AppPalette.brand.teal.main }}
