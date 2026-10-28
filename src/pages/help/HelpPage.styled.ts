@@ -10,6 +10,7 @@ export const StyledHelpPage = styled.main`
 
   img {
     align-self: center;
+    width: 100%;
   }
 
   button {

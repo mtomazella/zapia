@@ -8,6 +8,8 @@ import { SPACE_PAGE_ROUTE } from 'shared/constants'
 
 import singleUseRoll from './assets/single.png'
 import situationImage from './assets/situation.png'
+import owlbearAdd from './assets/owlbear-add.png'
+import owlbear from './assets/owlbear.png'
 import { StyledHelpPage } from './HelpPage.styled'
 
 export const HelpPage: React.FC = () => {
@@ -230,6 +232,40 @@ export const HelpPage: React.FC = () => {
         <br />
         <b>Exemplo:</b> 1d20 + [FOR]
       </p>
+
+      <h3>Múltiplas Expressões e Grupos</h3>
+      <p>
+        É possível criar situações com múltiplas expressões, usando o botão "+"
+        ao lado do título da seção de expressões. Cada expressão pode ter um
+        grupo que separa das outras.
+        <br />
+        Suponha que seu personagem tem um ataque que causa dano de fogo e gelo.
+        Você pode criar duas expressões em uma única situação e ter o resultado
+        de cada tipo de dano separadamente.
+      </p>
+
+      <h3>Controle de tipo "Variável"</h3>
+      <p>
+        É possível criar controles que alteram o valor de uma variável. Isso
+        pode ser usado para comportamentos mais complexos.
+        <br />A sintaxe para usar esse tipo de controle é a seguinte:
+      </p>
+      <p>VAR: modificador valor; VAR2: modificador valor; ...</p>
+      <p>
+        <b>Exemplo:</b> FOR:+2; A:-1; bonus:=4
+      </p>
+
+      <h1>Extensão OwlBear Rodeo</h1>
+      <p>
+        A extensão OwlBear Rodeo permite que você utilize o Zapia diretamente no
+        site do OwlBear Rodeo, compartilhando o histórico de rolagens com os
+        outros jogadores. Para isso, use a url
+        "https://zapia.vercel.app/manifest.json" no "+" na parte superior
+        direita da sessão de Extensões.
+      </p>
+      <img src={owlbearAdd} />
+      <p />
+      <img src={owlbear} />
     </StyledHelpPage>
   )
 }
