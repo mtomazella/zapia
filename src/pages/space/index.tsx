@@ -99,18 +99,18 @@ export const Space: React.FC = () => {
       prev =>
         `${prev}${
           prev.endsWith('+') || prev.endsWith('-') || prev === '' ? '1' : ''
-        }${value}`
+        }${value}`,
     )
 
   const save = useCallback(
     (situation: TSituation) => updateById(situation),
-    [updateById]
+    [updateById],
   )
 
   const rollHandler = useCallback(
     async (
       expression?: Expression[] | string,
-      meta?: { situation?: TSituation | null }
+      meta?: { situation?: TSituation | null },
     ) => {
       if (!expression || expression.length === 0)
         expression = [{ expression: '1d20cs' }]
@@ -137,7 +137,7 @@ export const Space: React.FC = () => {
         await sendRollOwlbear(rollToSend)
       }
     },
-    [expressionText, sendRollBot, spaceConnection, roll]
+    [expressionText, sendRollBot, spaceConnection, roll],
   )
 
   const rollOneShot = useCallback(() => {
@@ -181,9 +181,9 @@ export const Space: React.FC = () => {
           s.expression
             .toLowerCase()
             .replaceAll(' ', '')
-            .includes(search.toLowerCase().replaceAll(' ', ''))
+            .includes(search.toLowerCase().replaceAll(' ', '')),
       ),
-    [unfilteredSituations, search]
+    [unfilteredSituations, search],
   )
 
   const goToEditPage = useCallback(
@@ -191,17 +191,17 @@ export const Space: React.FC = () => {
       push(
         `/${EDIT_SITUATION_PAGE_ROUTE}?id=${id}${
           selectedSpace ? `&space=${selectedSpace}` : ''
-        }`
+        }`,
       ),
-    [push, selectedSpace]
+    [push, selectedSpace],
   )
 
   const goToConnectionPage = useCallback(
     () =>
       push(
-        `/${CONNECTION_CONFIG_ROUTE}?space=${selectedSpace ?? DEFAULT_SPACE}`
+        `/${CONNECTION_CONFIG_ROUTE}?space=${selectedSpace ?? DEFAULT_SPACE}`,
       ),
-    [push, selectedSpace]
+    [push, selectedSpace],
   )
 
   const goToHelpPage = useCallback(() => push(`/${HELP_PAGE_ROUTE}`), [push])
@@ -215,7 +215,7 @@ export const Space: React.FC = () => {
       `/${EDIT_SITUATION_PAGE_ROUTE}?${generateSearchParams({
         initialExpression: expressionText,
         space: selectedSpace,
-      })}`
+      })}`,
     )
 
   const onSendRollsChange = useCallback(
@@ -224,7 +224,7 @@ export const Space: React.FC = () => {
         [selectedSpace ?? 'default']: { sendRolls: checked },
       })
     },
-    [updateConnectionInfo]
+    [updateConnectionInfo],
   )
 
   const openMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -264,7 +264,7 @@ export const Space: React.FC = () => {
       space?.variables,
       colapses,
       toggle,
-    ]
+    ],
   )
 
   return (
